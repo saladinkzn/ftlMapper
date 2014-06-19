@@ -23,7 +23,7 @@ public class MapperInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final Query query = method.getAnnotation(Query.class);
-        // Currently not annotated by @Query methods are not supported
+        // Currently methods not annotated by @Query are not supported
         if(query == null) {
             // TODO: toString? getClass?
             throw new UnsupportedOperationException("invocation handler does not support non-Query methods");

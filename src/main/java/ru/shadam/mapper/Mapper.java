@@ -14,18 +14,14 @@ import java.lang.reflect.Proxy;
 public class Mapper {
     private static final Logger logger = LoggerFactory.getLogger(Mapper.class);
 
-    private DataSourceAdapter dataSourceAdapter;
+    private MapperInvocationHandler mapperInvocationHandler;
 
-    private QueryManager queryManager;
-
-    public Mapper(DataSourceAdapter dataSourceAdapter, QueryManager queryManager) {
-        this.dataSourceAdapter = dataSourceAdapter;
-        this.queryManager = queryManager;
+    public Mapper(MapperInvocationHandler mapperInvocationHandler) {
+        this.mapperInvocationHandler = mapperInvocationHandler;
     }
 
     public <T> T getMapper(Class<T> clazz) {
         // TODO шки
-        InvocationHandler mapperInvocationHandler = new MapperInvocationHandler(queryManager, dataSourceAdapter);
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},
