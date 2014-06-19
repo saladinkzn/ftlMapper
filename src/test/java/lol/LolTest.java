@@ -29,9 +29,12 @@ public class LolTest {
         final MapperInvocationHandler mapperInvocationHandler = new MapperInvocationHandler(queryManager, dataSourceAdapter);
         final Mapper mapper = new Mapper(mapperInvocationHandler);
         final LolRepository lolRepository = mapper.getMapper(LolRepository.class);
-        final List<LolInfo> lols = lolRepository.getLols(5);
+        final List<LolInfo> lols = lolRepository.getLols(1);
         for(LolInfo lol: lols) {
             System.out.println(lol);
         }
+        //
+        final LolInfo lolInfo = lolRepository.getLolInfo(2L);
+        System.out.println(lolInfo);
     }
 }

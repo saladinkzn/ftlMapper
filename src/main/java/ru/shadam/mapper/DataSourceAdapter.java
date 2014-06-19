@@ -36,4 +36,23 @@ public class DataSourceAdapter {
             }
         }
     }
+
+    public <T> T uniqueQuery(String sql, RowMapper<T> rowMapper) throws SQLException {
+        try(Connection connection = dataSource.getConnection()) {
+            try(Statement statement = connection.createStatement()) {
+                try(ResultSet resultSet = statement.executeQuery(sql)) {
+                    if(!resultSet.next()) {
+                        return null;
+                    }
+                    final T result = rowMapper.mapRow(resultSet);
+                    if(resultSet.next()) {
+                        throw new RuntimeException("query returns more than one result row");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+        }
+
+    }
 }

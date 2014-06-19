@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * InvocationHandler for our "Repository"
@@ -27,24 +28,30 @@ public class MapperInvocationHandler implements InvocationHandler {
         if(query == null) {
             // TODO: toString? getClass?
             throw new UnsupportedOperationException("invocation handler does not support non-Query methods");
-        } else {
-            final String templateName = query.templateName();
-            final RowMapper<?> rowMapper = query.mapper().newInstance();
-            // Ищем параметры, отмеченные аннотацией @Param
-            final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-            final HashMap<String, Object> params = new HashMap<>();
-            for(int i = 0; i < args.length; i++ ){
-                final Annotation[] annotations = parameterAnnotations[i];
-                for(Annotation annotation: annotations) {
-                    if(annotation instanceof Param) {
-                        Param param = (Param) annotation;
-                        final String paramName = param.value();
-                        params.put(paramName, args[i]);
-                    }
+        }
+        final String templateName = query.templateName();
+        final RowMapper<?> rowMapper = query.mapper().newInstance();
+        // Ищем параметры, отмеченные аннотацией @Param
+        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        final HashMap<String, Object> params = new HashMap<>();
+        for(int i = 0; i < args.length; i++ ){
+            final Annotation[] annotations = parameterAnnotations[i];
+            for(Annotation annotation: annotations) {
+                if(annotation instanceof Param) {
+                    Param param = (Param) annotation;
+                    final String paramName = param.value();
+                    params.put(paramName, args[i]);
                 }
             }
-            final String sql = queryManager.getQuery(templateName, params);
+        }
+        final String sql = queryManager.getQuery(templateName, params);
+        //
+        final Class<?> returnType = method.getReturnType();
+        // TODO: improve type support
+        if(returnType.isAssignableFrom(List.class)) {
             return dataSourceAdapter.query(sql, rowMapper);
+        } else {
+            return dataSourceAdapter.uniqueQuery(sql, rowMapper);
         }
     }
 }
