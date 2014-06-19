@@ -16,13 +16,16 @@ public class Mapper {
 
     private DataSourceAdapter dataSourceAdapter;
 
-    public Mapper(DataSourceAdapter dataSourceAdapter) {
+    private QueryManager queryManager;
+
+    public Mapper(DataSourceAdapter dataSourceAdapter, QueryManager queryManager) {
         this.dataSourceAdapter = dataSourceAdapter;
+        this.queryManager = queryManager;
     }
 
     public <T> T getMapper(Class<T> clazz) {
         // TODO шки
-        InvocationHandler mapperInvocationHandler = new MapperInvocationHandler(dataSourceAdapter);
+        InvocationHandler mapperInvocationHandler = new MapperInvocationHandler(queryManager, dataSourceAdapter);
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},

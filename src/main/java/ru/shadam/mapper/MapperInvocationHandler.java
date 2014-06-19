@@ -11,9 +11,12 @@ import java.util.HashMap;
  * @author Timur Shakurov
  */
 public class MapperInvocationHandler implements InvocationHandler {
+    private QueryManager queryManager;
+
     private DataSourceAdapter dataSourceAdapter;
 
-    public MapperInvocationHandler(DataSourceAdapter dataSourceAdapter) {
+    public MapperInvocationHandler(QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
+        this.queryManager = queryManager;
         this.dataSourceAdapter = dataSourceAdapter;
     }
 
@@ -40,7 +43,8 @@ public class MapperInvocationHandler implements InvocationHandler {
                     }
                 }
             }
-            return dataSourceAdapter.query(templateName, params, rowMapper);
+            final String sql = queryManager.getQuery(templateName, params);
+            return dataSourceAdapter.query(sql, rowMapper);
         }
     }
 }

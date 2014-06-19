@@ -15,20 +15,17 @@ import java.util.Map;
  * @author Timur Shakurov
  */
 public class DataSourceAdapter {
-    private QueryManager queryManager;
-
     private DataSource dataSource;
 
-    public DataSourceAdapter(QueryManager queryManager, DataSource dataSource) {
-        this.queryManager = queryManager;
+    public DataSourceAdapter(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     // TODO: templateName + params -> SQL
-    public <T> List<T> query(String templateName, Map<String, ?> params, RowMapper<T> mapper) throws SQLException {
+    public <T> List<T> query(String sql, RowMapper<T> mapper) throws SQLException {
         try(Connection connection = dataSource.getConnection()) {
             try(Statement statement = connection.createStatement()) {
-                try(ResultSet resultSet = statement.executeQuery(queryManager.getQuery(templateName, params))) {
+                try(ResultSet resultSet = statement.executeQuery(sql)) {
                     List<T> resultList = new ArrayList<>();
                     while (resultSet.next()) {
                         final T mapped = mapper.mapRow(resultSet);
