@@ -1,0 +1,22 @@
+apply plugin: 'java'
+
+compileJava {
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.freemarker:freemarker:2.3.20'
+    testCompile 'org.slf4j:slf4j-simple:1.7.7'
+    testCompile 'org.springframework:spring-jdbc:4.0.5.RELEASE'
+    testCompile 'com.h2database:h2:1.4.178'
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.11'
+}
