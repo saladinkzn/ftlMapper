@@ -7,7 +7,6 @@ import ru.shadam.ftlmapper.util.QueryManager;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,19 +50,7 @@ public class QueryInvocationHandler implements InvocationHandler {
         final String sql = queryManager.getQuery(templateName, parameters);
         final RowMapper<?> rowMapper = methodEvaluationInfo.getRowMapper();
         //
-        return getResult(sql, rowMapper, methodEvaluationInfo.getReturnType());
-    }
-
-    // TODO: this should go to MethodEvaluationInfo
-    private Object getResult(String sql, RowMapper<?> rowMapper, Class<?> returnType1) throws java.sql.SQLException {
-        // TODO: improve type support
-        final Object result;
-        if(returnType1.isAssignableFrom(List.class)) {
-            result = dataSourceAdapter.query(sql, rowMapper);
-        } else {
-            result = dataSourceAdapter.uniqueQuery(sql, rowMapper);
-        }
-        return result;
+        return methodEvaluationInfo.getResultStrategy().getResult(dataSourceAdapter, sql, rowMapper);
     }
 
 }

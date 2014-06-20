@@ -10,16 +10,17 @@ import ru.shadam.ftlmapper.query.annotations.Query;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Timur Shakurov
  */
 public class MethodEvaluationInfo {
-    private String templateName;
-    private RowMapper<?> rowMapper;
-    private Annotation[][] parameterAnnotations;
-    private Class<?> returnType;
+    private final ResultStrategy resultStrategy;
+    private final String templateName;
+    private final RowMapper<?> rowMapper;
+    private final Annotation[][] parameterAnnotations;
     //
 
     public MethodEvaluationInfo(Method method) {
@@ -50,7 +51,13 @@ public class MethodEvaluationInfo {
         }
         //
         parameterAnnotations = method.getParameterAnnotations();
-        returnType = method.getReturnType();
+        //
+
+        if(method.getReturnType().isAssignableFrom(List.class)) {
+            resultStrategy = new ListResultStrategy();
+        } else {
+            resultStrategy = new UniqueResultStrategy();
+        }
 
     }
 
@@ -80,7 +87,7 @@ public class MethodEvaluationInfo {
         return rowMapper;
     }
 
-    public Class<?> getReturnType() {
-        return returnType;
+    public ResultStrategy getResultStrategy() {
+        return resultStrategy;
     }
 }
