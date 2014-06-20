@@ -26,8 +26,8 @@ public class LolTest {
             }
         }
         final DataSourceAdapter dataSourceAdapter = new DataSourceAdapter(simpleDriverDataSource);
-        final MapperInvocationHandler mapperInvocationHandler = new MapperInvocationHandler(queryManager, dataSourceAdapter);
-        final Mapper mapper = new Mapper(mapperInvocationHandler);
+        final QueryInvocationHandler queryInvocationHandler = new QueryInvocationHandler(queryManager, dataSourceAdapter);
+        final Mapper mapper = new Mapper(queryInvocationHandler);
         final LolRepository lolRepository = mapper.getMapper(LolRepository.class);
         final List<LolInfo> lols = lolRepository.getLols(1);
         for(LolInfo lol: lols) {

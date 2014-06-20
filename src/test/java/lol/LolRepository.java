@@ -1,7 +1,7 @@
 package lol;
 
-import ru.shadam.mapper.Param;
-import ru.shadam.mapper.Query;
+import ru.shadam.mapper.query.annotations.Param;
+import ru.shadam.mapper.query.annotations.Query;
 
 import java.util.List;
 

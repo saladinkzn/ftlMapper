@@ -3,7 +3,6 @@ package ru.shadam.mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 /**
@@ -14,10 +13,10 @@ import java.lang.reflect.Proxy;
 public class Mapper {
     private static final Logger logger = LoggerFactory.getLogger(Mapper.class);
 
-    private MapperInvocationHandler mapperInvocationHandler;
+    private QueryInvocationHandler queryInvocationHandler;
 
-    public Mapper(MapperInvocationHandler mapperInvocationHandler) {
-        this.mapperInvocationHandler = mapperInvocationHandler;
+    public Mapper(QueryInvocationHandler queryInvocationHandler) {
+        this.queryInvocationHandler = queryInvocationHandler;
     }
 
     public <T> T getMapper(Class<T> clazz) {
@@ -25,7 +24,7 @@ public class Mapper {
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},
-                mapperInvocationHandler
+                queryInvocationHandler
         ));
     }
 

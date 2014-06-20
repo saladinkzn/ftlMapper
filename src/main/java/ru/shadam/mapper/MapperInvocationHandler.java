@@ -1,57 +1,56 @@
 package ru.shadam.mapper;
 
-import java.lang.annotation.Annotation;
+import ru.shadam.mapper.mapper.annotations.Property;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 /**
- * InvocationHandler for our "Repository"
- *
  * @author Timur Shakurov
  */
 public class MapperInvocationHandler implements InvocationHandler {
-    private QueryManager queryManager;
+    private Class<?> mappedType;
+    private Map<String, Field> fields;
+    private Map<String, Class<?>> properties;
 
-    private DataSourceAdapter dataSourceAdapter;
+    public MapperInvocationHandler(Class<?> mappedType) {
+        this.mappedType = mappedType;
+        properties = new HashMap<>();
+        fields = new HashMap<>();
 
-    public MapperInvocationHandler(QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
-        this.queryManager = queryManager;
-        this.dataSourceAdapter = dataSourceAdapter;
+        final Field[] fields = mappedType.getDeclaredFields();
+        for(Field field: fields) {
+            final Property annotation = field.getAnnotation(Property.class);
+            if(annotation != null) {
+                field.setAccessible(true);
+                final String propertyName = annotation.value();
+                final Class<?> clazz = field.getType();
+                properties.put(propertyName, clazz);
+                this.fields.put(propertyName, field);
+            }
+        }
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final Query query = method.getAnnotation(Query.class);
-        // Currently methods not annotated by @Query are not supported
-        if(query == null) {
-            // TODO: toString? getClass?
-            throw new UnsupportedOperationException("invocation handler does not support non-Query methods");
+        if (!method.getName().equals("mapRow")) {
+            throw new UnsupportedOperationException();
         }
-        final String templateName = query.templateName();
-        final RowMapper<?> rowMapper = query.mapper().newInstance();
-        // Ищем параметры, отмеченные аннотацией @Param
-        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        final HashMap<String, Object> params = new HashMap<>();
-        for(int i = 0; i < args.length; i++ ){
-            final Annotation[] annotations = parameterAnnotations[i];
-            for(Annotation annotation: annotations) {
-                if(annotation instanceof Param) {
-                    Param param = (Param) annotation;
-                    final String paramName = param.value();
-                    params.put(paramName, args[i]);
-                }
-            }
+        final ResultSet resultSet = (ResultSet)args[0];
+        final Map<String, Object> values = new HashMap<>();
+        for(Map.Entry<String, Class<?>> property: properties.entrySet()) {
+            final String propertyName = property.getKey();
+            final Object value = resultSet.getObject(propertyName);
+            values.put(propertyName, value);
         }
-        final String sql = queryManager.getQuery(templateName, params);
-        //
-        final Class<?> returnType = method.getReturnType();
-        // TODO: improve type support
-        if(returnType.isAssignableFrom(List.class)) {
-            return dataSourceAdapter.query(sql, rowMapper);
-        } else {
-            return dataSourceAdapter.uniqueQuery(sql, rowMapper);
+        final Object instance = mappedType.newInstance();
+        for(String property: values.keySet()) {
+            fields.get(property).set(instance, values.get(property));
         }
+        return mappedType.cast(instance);
     }
 }
