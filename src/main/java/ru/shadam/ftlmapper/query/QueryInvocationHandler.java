@@ -1,18 +1,17 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ftlmapper.util.DataSourceAdapter;
-import ru.shadam.ftlmapper.util.QueryManager;
-import ru.shadam.ftlmapper.mapper.MapperInvocationHandler;
+import ru.shadam.ftlmapper.mapper.AnnotationRowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.query.annotations.MappedType;
 import ru.shadam.ftlmapper.query.annotations.Mapper;
 import ru.shadam.ftlmapper.query.annotations.Param;
 import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,11 +45,7 @@ public class QueryInvocationHandler implements InvocationHandler {
         if(mapper != null) {
             rowMapper = mapper.value().newInstance();
         } else if (mappedType != null) {
-            rowMapper = RowMapper.class.cast(Proxy.newProxyInstance(
-                    RowMapper.class.getClassLoader(),
-                    new Class[]{RowMapper.class},
-                    new MapperInvocationHandler(mappedType.value())
-            ));
+            rowMapper = new AnnotationRowMapper<>(mappedType.value());
         } else {
             throw new IllegalStateException();
         }
