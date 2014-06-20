@@ -1,19 +1,14 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ftlmapper.mapper.AnnotationRowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
-import ru.shadam.ftlmapper.query.annotations.MappedType;
-import ru.shadam.ftlmapper.query.annotations.Mapper;
-import ru.shadam.ftlmapper.query.annotations.Param;
-import ru.shadam.ftlmapper.query.annotations.Query;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * InvocationHandler for our "Repository"
@@ -25,53 +20,50 @@ public class QueryInvocationHandler implements InvocationHandler {
 
     private DataSourceAdapter dataSourceAdapter;
 
-    public QueryInvocationHandler(QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
+    private Map<Method, MethodEvaluationInfo> methodInfo;
+
+    public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
         this.queryManager = queryManager;
         this.dataSourceAdapter = dataSourceAdapter;
+        //
+        methodInfo = new HashMap<>();
+        final Method[] methods = targetClass.getDeclaredMethods();
+        for(Method method: methods) {
+            try {
+                final MethodEvaluationInfo methodEvaluationInfo = new MethodEvaluationInfo(method);
+                methodInfo.put(method, methodEvaluationInfo);
+            } catch (Exception ex) {
+                // TODO: log
+            }
+        }
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final Query query = method.getAnnotation(Query.class);
-        // Currently methods not annotated by @Query are not supported
-        if(query == null) {
-            // TODO: toString? getClass?
-            throw new UnsupportedOperationException("invocation handler does not support non-Query methods");
+        if(!methodInfo.containsKey(method)) {
+            throw new UnsupportedOperationException("method is not supported");
         }
-        final String templateName = query.value();
-        final RowMapper<?> rowMapper;
-        final Mapper mapper = method.getAnnotation(Mapper.class);
-        final MappedType mappedType = method.getAnnotation(MappedType.class);
-        if(mapper != null) {
-            rowMapper = mapper.value().newInstance();
-        } else if (mappedType != null) {
-            rowMapper = new AnnotationRowMapper<>(mappedType.value());
-        } else {
-            throw new IllegalStateException();
-        }
-        // Ищем параметры, отмеченные аннотацией @Param
-        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        final HashMap<String, Object> params = new HashMap<>();
-        if(args != null) {
-            for (int i = 0; i < args.length; i++) {
-                final Annotation[] annotations = parameterAnnotations[i];
-                for (Annotation annotation : annotations) {
-                    if (annotation instanceof Param) {
-                        Param param = (Param) annotation;
-                        final String paramName = param.value();
-                        params.put(paramName, args[i]);
-                    }
-                }
-            }
-        }
-        final String sql = queryManager.getQuery(templateName, params);
         //
-        final Class<?> returnType = method.getReturnType();
-        // TODO: improve type support
-        if(returnType.isAssignableFrom(List.class)) {
-            return dataSourceAdapter.query(sql, rowMapper);
-        } else {
-            return dataSourceAdapter.uniqueQuery(sql, rowMapper);
-        }
+        final MethodEvaluationInfo methodEvaluationInfo = methodInfo.get(method);
+        final Map<String, Object> parameters = methodEvaluationInfo.getParameters(args);
+        //
+        final String templateName = methodEvaluationInfo.getTemplateName();
+        final String sql = queryManager.getQuery(templateName, parameters);
+        final RowMapper<?> rowMapper = methodEvaluationInfo.getRowMapper();
+        //
+        return getResult(sql, rowMapper, methodEvaluationInfo.getReturnType());
     }
+
+    // TODO: this should go to MethodEvaluationInfo
+    private Object getResult(String sql, RowMapper<?> rowMapper, Class<?> returnType1) throws java.sql.SQLException {
+        // TODO: improve type support
+        final Object result;
+        if(returnType1.isAssignableFrom(List.class)) {
+            result = dataSourceAdapter.query(sql, rowMapper);
+        } else {
+            result = dataSourceAdapter.uniqueQuery(sql, rowMapper);
+        }
+        return result;
+    }
+
 }
