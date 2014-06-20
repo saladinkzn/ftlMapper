@@ -10,16 +10,19 @@ import java.lang.reflect.Proxy;
  *
  * @author Timur Shakurov
  */
-public class Mapper {
-    private static final Logger logger = LoggerFactory.getLogger(Mapper.class);
+public class RepositoryFactory {
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryFactory.class);
 
     private QueryInvocationHandler queryInvocationHandler;
 
-    public Mapper(QueryInvocationHandler queryInvocationHandler) {
+    public RepositoryFactory(QueryInvocationHandler queryInvocationHandler) {
         this.queryInvocationHandler = queryInvocationHandler;
     }
 
     public <T> T getMapper(Class<T> clazz) {
+        if(!clazz.isInterface()) {
+            throw new IllegalArgumentException("cannot create repository for class");
+        }
         // TODO шки
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),

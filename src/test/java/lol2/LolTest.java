@@ -1,10 +1,14 @@
-package lol;
+package lol2;
 
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import ru.shadam.mapper.*;
+import ru.shadam.mapper.DataSourceAdapter;
+import ru.shadam.mapper.RepositoryFactory;
+import ru.shadam.mapper.QueryInvocationHandler;
+import ru.shadam.mapper.QueryManager;
 
-import java.sql.*;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.Statement;
 
 /**
  * @author Timur Shakurov
@@ -29,12 +33,8 @@ public class LolTest {
         final QueryInvocationHandler queryInvocationHandler = new QueryInvocationHandler(queryManager, dataSourceAdapter);
         final RepositoryFactory repositoryFactory = new RepositoryFactory(queryInvocationHandler);
         final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
-        final List<LolInfo> lols = lolRepository.getLols(1);
-        for(LolInfo lol: lols) {
-            System.out.println(lol);
+        for(LolInfo lolInfo: lolRepository.getLols()) {
+            System.out.println(lolInfo);
         }
-        //
-        final LolInfo lolInfo = lolRepository.getLolInfo(2L);
-        System.out.println(lolInfo);
     }
 }
