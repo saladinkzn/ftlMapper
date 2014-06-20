@@ -1,6 +1,6 @@
 package lol;
 
-import ru.shadam.mapper.RowMapper;
+import ru.shadam.ftlmapper.mapper.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

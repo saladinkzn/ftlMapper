@@ -1,8 +1,8 @@
 package lol;
 
-import ru.shadam.mapper.query.annotations.Mapper;
-import ru.shadam.mapper.query.annotations.Param;
-import ru.shadam.mapper.query.annotations.Query;
+import ru.shadam.ftlmapper.query.annotations.Mapper;
+import ru.shadam.ftlmapper.query.annotations.Param;
+import ru.shadam.ftlmapper.query.annotations.Query;
 
 import java.util.List;
 

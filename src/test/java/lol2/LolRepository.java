@@ -1,7 +1,7 @@
 package lol2;
 
-import ru.shadam.mapper.query.annotations.MappedType;
-import ru.shadam.mapper.query.annotations.Query;
+import ru.shadam.ftlmapper.query.annotations.MappedType;
+import ru.shadam.ftlmapper.query.annotations.Query;
 
 import java.util.List;
 

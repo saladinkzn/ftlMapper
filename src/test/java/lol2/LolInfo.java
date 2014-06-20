@@ -1,6 +1,6 @@
 package lol2;
 
-import ru.shadam.mapper.mapper.annotations.Property;
+import ru.shadam.ftlmapper.mapper.annotations.Property;
 
 /**
  * @author Timur Shakurov

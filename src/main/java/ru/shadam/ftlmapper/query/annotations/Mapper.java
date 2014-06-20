@@ -1,6 +1,6 @@
-package ru.shadam.mapper.query.annotations;
+package ru.shadam.ftlmapper.query.annotations;
 
-import ru.shadam.mapper.RowMapper;
+import ru.shadam.ftlmapper.mapper.RowMapper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

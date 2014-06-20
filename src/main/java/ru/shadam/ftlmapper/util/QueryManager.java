@@ -1,4 +1,4 @@
-package ru.shadam.mapper;
+package ru.shadam.ftlmapper.util;
 
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;

@@ -1,7 +1,8 @@
-package ru.shadam.mapper;
+package ru.shadam.ftlmapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shadam.ftlmapper.query.QueryInvocationHandler;
 
 import java.lang.reflect.Proxy;
 

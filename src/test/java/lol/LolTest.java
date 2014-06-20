@@ -1,7 +1,10 @@
 package lol;
 
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import ru.shadam.mapper.*;
+import ru.shadam.ftlmapper.*;
+import ru.shadam.ftlmapper.query.QueryInvocationHandler;
+import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.sql.*;
 import java.util.List;

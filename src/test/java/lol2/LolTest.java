@@ -1,10 +1,10 @@
 package lol2;
 
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import ru.shadam.mapper.DataSourceAdapter;
-import ru.shadam.mapper.RepositoryFactory;
-import ru.shadam.mapper.QueryInvocationHandler;
-import ru.shadam.mapper.QueryManager;
+import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.RepositoryFactory;
+import ru.shadam.ftlmapper.query.QueryInvocationHandler;
+import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.sql.Connection;
 import java.sql.Driver;

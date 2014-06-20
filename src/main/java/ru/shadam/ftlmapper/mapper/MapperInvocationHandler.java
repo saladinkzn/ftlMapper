@@ -1,6 +1,6 @@
-package ru.shadam.mapper;
+package ru.shadam.ftlmapper.mapper;
 
-import ru.shadam.mapper.mapper.annotations.Property;
+import ru.shadam.ftlmapper.mapper.annotations.Property;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;

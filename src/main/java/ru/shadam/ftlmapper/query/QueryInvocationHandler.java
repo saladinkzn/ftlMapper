@@ -1,9 +1,13 @@
-package ru.shadam.mapper;
+package ru.shadam.ftlmapper.query;
 
-import ru.shadam.mapper.query.annotations.MappedType;
-import ru.shadam.mapper.query.annotations.Mapper;
-import ru.shadam.mapper.query.annotations.Param;
-import ru.shadam.mapper.query.annotations.Query;
+import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.util.QueryManager;
+import ru.shadam.ftlmapper.mapper.MapperInvocationHandler;
+import ru.shadam.ftlmapper.mapper.RowMapper;
+import ru.shadam.ftlmapper.query.annotations.MappedType;
+import ru.shadam.ftlmapper.query.annotations.Mapper;
+import ru.shadam.ftlmapper.query.annotations.Param;
+import ru.shadam.ftlmapper.query.annotations.Query;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;

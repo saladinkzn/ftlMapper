@@ -1,4 +1,6 @@
-package ru.shadam.mapper;
+package ru.shadam.ftlmapper.util;
+
+import ru.shadam.ftlmapper.mapper.RowMapper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -7,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class for executing database queries
