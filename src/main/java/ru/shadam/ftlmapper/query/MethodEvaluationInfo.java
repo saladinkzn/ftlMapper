@@ -19,14 +19,12 @@ import java.util.Map;
  * @author Timur Shakurov
  */
 public class MethodEvaluationInfo {
-    private final QueryManager queryManager;
     private final ResultStrategy resultStrategy;
     private final QueryStrategy queryStrategy;
     private final Annotation[][] parameterAnnotations;
     //
 
     public MethodEvaluationInfo(QueryManager queryManager, Method method) {
-        this.queryManager = queryManager;
 
         final Template template = method.getAnnotation(Template.class);
         if(template != null) {
