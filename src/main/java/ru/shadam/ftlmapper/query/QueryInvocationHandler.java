@@ -2,7 +2,6 @@ package ru.shadam.ftlmapper.query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 
@@ -33,8 +32,7 @@ public class QueryInvocationHandler implements InvocationHandler {
         final Method[] methods = targetClass.getDeclaredMethods();
         for(Method method: methods) {
             try {
-                final MethodEvaluationInfo methodEvaluationInfo = new MethodEvaluationInfo(method);
-                methodInfo.put(method, methodEvaluationInfo);
+                methodInfo.put(method, new MethodEvaluationInfo(method));
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
@@ -52,9 +50,8 @@ public class QueryInvocationHandler implements InvocationHandler {
         //
         final String templateName = methodEvaluationInfo.getTemplateName();
         final String sql = queryManager.getQuery(templateName, parameters);
-        final RowMapper<?> rowMapper = methodEvaluationInfo.getRowMapper();
         //
-        return methodEvaluationInfo.getResultStrategy().getResult(dataSourceAdapter, sql, rowMapper);
+        return methodEvaluationInfo.getResultStrategy().getResult(dataSourceAdapter, sql);
     }
 
 }

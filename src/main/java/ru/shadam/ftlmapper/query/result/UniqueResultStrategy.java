@@ -9,9 +9,15 @@ import java.sql.SQLException;
 /**
  * @author Timur Shakurov
  */
-public class UniqueResultStrategy implements ResultStrategy {
+public class UniqueResultStrategy<T> implements ResultStrategy<T> {
+    private final RowMapper<T> rowMapper;
+
+    public UniqueResultStrategy(RowMapper<T> rowMapper) {
+        this.rowMapper = rowMapper;
+    }
+
     @Override
-    public <T> T getResult(DataSourceAdapter dataSourceAdapter, String sql, RowMapper<T> rowMapper) throws SQLException {
+    public T getResult(DataSourceAdapter dataSourceAdapter, String sql) throws SQLException {
         return dataSourceAdapter.uniqueQuery(sql, rowMapper);
     }
 }

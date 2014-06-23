@@ -21,7 +21,6 @@ import java.util.Map;
 public class MethodEvaluationInfo {
     private final ResultStrategy resultStrategy;
     private final String templateName;
-    private final RowMapper<?> rowMapper;
     private final Annotation[][] parameterAnnotations;
     //
 
@@ -42,6 +41,7 @@ public class MethodEvaluationInfo {
             throw new IllegalArgumentException("method should not be annotated with both @Mapper and @MappedType");
         }
         //
+        final RowMapper<?> rowMapper;
         if(mapper != null) {
             try {
                 rowMapper = mapper.value().newInstance();
@@ -56,9 +56,9 @@ public class MethodEvaluationInfo {
         //
 
         if(method.getReturnType().isAssignableFrom(List.class)) {
-            resultStrategy = new ListResultStrategy();
+            resultStrategy = new ListResultStrategy<>(rowMapper);
         } else {
-            resultStrategy = new UniqueResultStrategy();
+            resultStrategy = new UniqueResultStrategy<>(rowMapper);
         }
 
     }
@@ -83,10 +83,6 @@ public class MethodEvaluationInfo {
 
     public String getTemplateName() {
         return templateName;
-    }
-
-    public RowMapper<?> getRowMapper() {
-        return rowMapper;
     }
 
     public ResultStrategy getResultStrategy() {

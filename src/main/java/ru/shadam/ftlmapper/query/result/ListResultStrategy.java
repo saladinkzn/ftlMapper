@@ -10,9 +10,15 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
-public class ListResultStrategy implements ResultStrategy {
+public class ListResultStrategy<T> implements ResultStrategy<T> {
+    private final RowMapper<T> rowMapper;
+
+    public ListResultStrategy(RowMapper<T> rowMapper) {
+        this.rowMapper = rowMapper;
+    }
+
     @Override
-    public <T> List<T> getResult(DataSourceAdapter dataSourceAdapter, String sql, RowMapper<T> rowMapper) throws SQLException {
+    public List<T> getResult(DataSourceAdapter dataSourceAdapter, String sql) throws SQLException {
         return dataSourceAdapter.query(sql, rowMapper);
     }
 }
