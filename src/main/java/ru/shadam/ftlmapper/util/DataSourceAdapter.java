@@ -7,8 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class for executing database queries
@@ -24,15 +23,33 @@ public class DataSourceAdapter {
 
     // TODO: templateName + params -> SQL
     public <T> List<T> query(String sql, RowMapper<T> mapper) throws SQLException {
+        return query(sql, mapper, new Supplier<List<T>>() {
+            @Override
+            public List<T> get() {
+                return new ArrayList<>();
+            }
+        });
+    }
+
+    public <T> Set<T> queryForSet(String sql, RowMapper<T> mapper) throws SQLException {
+        return query(sql, mapper, new Supplier<Set<T>>() {
+            @Override
+            public Set<T> get() {
+                return new LinkedHashSet<>();
+            }
+        });
+    }
+
+    public <T, U extends Collection<T>> U query(String sql, RowMapper<T> mapper, Supplier<U> supplier) throws SQLException {
         try(Connection connection = dataSource.getConnection()) {
             try(Statement statement = connection.createStatement()) {
                 try(ResultSet resultSet = statement.executeQuery(sql)) {
-                    List<T> resultList = new ArrayList<>();
-                    while (resultSet.next()) {
+                    final U result = supplier.get();
+                    while(resultSet.next()) {
                         final T mapped = mapper.mapRow(resultSet);
-                        resultList.add(mapped);
+                        result.add(mapped);
                     }
-                    return resultList;
+                    return result;
                 }
             }
         }
