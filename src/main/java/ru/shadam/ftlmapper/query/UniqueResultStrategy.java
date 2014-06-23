@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class UniqueResultStrategy implements ResultStrategy {
     @Override
-    public <T> Object getResult(DataSourceAdapter dataSourceAdapter, String sql, RowMapper<T> rowMapper) throws SQLException {
+    public <T> T getResult(DataSourceAdapter dataSourceAdapter, String sql, RowMapper<T> rowMapper) throws SQLException {
         return dataSourceAdapter.uniqueQuery(sql, rowMapper);
     }
 }

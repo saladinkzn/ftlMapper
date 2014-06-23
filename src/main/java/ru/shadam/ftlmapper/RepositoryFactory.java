@@ -3,6 +3,8 @@ package ru.shadam.ftlmapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shadam.ftlmapper.query.QueryInvocationHandler;
+import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.reflect.Proxy;
 
@@ -14,10 +16,12 @@ import java.lang.reflect.Proxy;
 public class RepositoryFactory {
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFactory.class);
 
-    private QueryInvocationHandler queryInvocationHandler;
+    private QueryManager queryManager;
+    private DataSourceAdapter dataSourceAdapter;
 
-    public RepositoryFactory(QueryInvocationHandler queryInvocationHandler) {
-        this.queryInvocationHandler = queryInvocationHandler;
+    public RepositoryFactory(QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
+        this.queryManager = queryManager;
+        this.dataSourceAdapter = dataSourceAdapter;
     }
 
     public <T> T getMapper(Class<T> clazz) {
@@ -28,7 +32,7 @@ public class RepositoryFactory {
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},
-                queryInvocationHandler
+                new QueryInvocationHandler(clazz, queryManager, dataSourceAdapter)
         ));
     }
 

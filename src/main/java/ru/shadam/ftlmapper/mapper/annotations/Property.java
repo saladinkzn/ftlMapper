@@ -14,5 +14,5 @@ public @interface Property {
     /**
      * SQL column name
      */
-    String value();
+    String value() default "";
 }

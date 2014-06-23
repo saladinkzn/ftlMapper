@@ -1,4 +1,4 @@
-package lol;
+package lol3;
 
 import ru.shadam.ftlmapper.RepositoryFactory;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
@@ -15,13 +15,10 @@ public class LolTest {
         final QueryManager queryManager = new QueryManager();
         final DataSourceAdapter dataSourceAdapter = TestHelper.getDataSourceAdapter();
         final RepositoryFactory repositoryFactory = new RepositoryFactory(queryManager, dataSourceAdapter);
-        final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
-        final List<LolInfo> lols = lolRepository.getLols(1);
-        for(LolInfo lol: lols) {
-            System.out.println(lol);
+        final LolRepository mapper = repositoryFactory.getMapper(LolRepository.class);
+        final List<LolInfo> all = mapper.getAll();
+        for (LolInfo info: all) {
+            System.out.println(info);
         }
-        //
-        final LolInfo lolInfo = lolRepository.getLolInfo(2L);
-        System.out.println(lolInfo);
     }
 }
