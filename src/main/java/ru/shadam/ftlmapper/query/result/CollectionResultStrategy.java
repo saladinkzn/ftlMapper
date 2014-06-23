@@ -23,6 +23,7 @@ public class CollectionResultStrategy<T> implements ResultStrategy<T> {
         if(!isSupported(targetClass)) {
             throw new IllegalArgumentException("class: " + targetClass + " is not supported");
         }
+        this.targetClass = targetClass;
         this.rowMapper = rowMapper;
     }
 
