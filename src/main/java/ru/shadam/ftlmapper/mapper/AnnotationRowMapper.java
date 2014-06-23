@@ -18,15 +18,11 @@ import java.util.Set;
  * @author Timur Shakurov
  */
 public class AnnotationRowMapper<T> implements RowMapper<T> {
-    private Class<T> mappedType;
-    private Map<String, Field> fields;
-    private Set<String> properties;
     private CreationStrategy<T> creationStrategy;
 
     public AnnotationRowMapper(Class<T> mappedType) {
-        this.mappedType = mappedType;
-        properties = new HashSet<>();
-        fields = new HashMap<>();
+        Set<String> properties = new HashSet<>();
+        Map<String, Field> fieldMap = new HashMap<>();
         //
         final Field[] fields = mappedType.getDeclaredFields();
         for(Field field: fields) {
@@ -36,7 +32,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                 final String annotatedName = annotation.value();
                 final String propertyName = annotatedName.isEmpty() ? field.getName() : annotatedName;
                 properties.add(propertyName);
-                this.fields.put(propertyName, field);
+                fieldMap.put(propertyName, field);
             }
         }
         //
@@ -66,7 +62,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                     }
                 }
                 if(creationStrategy == null) {
-                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, this.fields);
+                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, fieldMap);
                 } else {
                     throw new IllegalArgumentException("Only one constructor can be mapped with @Creator");
                 }
@@ -75,7 +71,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         if(creationStrategy == null) {
             try {
                 final Constructor<T> defaultConstructor = mappedType.getConstructor();
-                creationStrategy = new DefaultCreationStrategy<>(defaultConstructor, this.fields, properties);
+                creationStrategy = new DefaultCreationStrategy<>(defaultConstructor, fieldMap, properties);
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("if no constructor was mapped with @Creator there should be a default constructor");
             }
