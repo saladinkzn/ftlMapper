@@ -7,14 +7,14 @@ Samples:
 
 ### Example 1
     public interface LolRepository {
-        @Query("sql/lol/getAll.ftl")
+        @Template("sql/lol/getAll.ftl")
         @MappedType(LolInfo.class)
         public List<LolInfo> getAll();
     }
     
 ### Example 2        
     public interface LolRepository2 {
-        @Query("sql/lol/getOne.ftl")
+        @Template("sql/lol/getOne.ftl")
         @MappedType(LolInfoMapper.class)
         public LolInfo getOne(@Param("id") id);
     }
@@ -25,4 +25,11 @@ Samples:
             final String name = resultSet.getString("name");
             return new LolInfo(id, name);
         }
+    }
+    
+### Example 3
+    public interface LolRepository3 {
+        @Query("select id, name from lol where id = ?1")
+        @MappedType(LolInfo.class)
+        public LolInfo getOne(@Param("id") long id);
     }
