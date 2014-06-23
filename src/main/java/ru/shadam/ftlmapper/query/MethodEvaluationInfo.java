@@ -6,6 +6,8 @@ import ru.shadam.ftlmapper.query.annotations.MappedType;
 import ru.shadam.ftlmapper.query.annotations.Mapper;
 import ru.shadam.ftlmapper.query.annotations.Param;
 import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.query.result.ListResultStrategy;
+import ru.shadam.ftlmapper.query.result.UniqueResultStrategy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

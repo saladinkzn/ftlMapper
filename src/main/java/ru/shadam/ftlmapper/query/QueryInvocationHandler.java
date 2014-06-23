@@ -1,5 +1,7 @@
 package ru.shadam.ftlmapper.query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
@@ -15,6 +17,8 @@ import java.util.Map;
  * @author Timur Shakurov
  */
 public class QueryInvocationHandler implements InvocationHandler {
+    private final static Logger logger = LoggerFactory.getLogger(QueryInvocationHandler.class);
+
     private QueryManager queryManager;
 
     private DataSourceAdapter dataSourceAdapter;
@@ -32,7 +36,7 @@ public class QueryInvocationHandler implements InvocationHandler {
                 final MethodEvaluationInfo methodEvaluationInfo = new MethodEvaluationInfo(method);
                 methodInfo.put(method, methodEvaluationInfo);
             } catch (Exception ex) {
-                // TODO: log
+                logger.error(ex.getMessage(), ex);
             }
         }
     }

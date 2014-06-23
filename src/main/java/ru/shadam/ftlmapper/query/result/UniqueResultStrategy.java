@@ -1,6 +1,7 @@
-package ru.shadam.ftlmapper.query;
+package ru.shadam.ftlmapper.query.result;
 
 import ru.shadam.ftlmapper.mapper.RowMapper;
+import ru.shadam.ftlmapper.query.ResultStrategy;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 
 import java.sql.SQLException;
