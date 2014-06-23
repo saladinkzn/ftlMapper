@@ -18,21 +18,18 @@ import java.util.Map;
 public class QueryInvocationHandler implements InvocationHandler {
     private final static Logger logger = LoggerFactory.getLogger(QueryInvocationHandler.class);
 
-    private QueryManager queryManager;
-
     private DataSourceAdapter dataSourceAdapter;
 
     private Map<Method, MethodEvaluationInfo> methodInfo;
 
     public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
-        this.queryManager = queryManager;
         this.dataSourceAdapter = dataSourceAdapter;
         //
         methodInfo = new HashMap<>();
         final Method[] methods = targetClass.getDeclaredMethods();
         for(Method method: methods) {
             try {
-                methodInfo.put(method, new MethodEvaluationInfo(method));
+                methodInfo.put(method, new MethodEvaluationInfo(queryManager, method));
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
@@ -48,8 +45,7 @@ public class QueryInvocationHandler implements InvocationHandler {
         final MethodEvaluationInfo methodEvaluationInfo = methodInfo.get(method);
         final Map<String, Object> parameters = methodEvaluationInfo.getParameters(args);
         //
-        final String templateName = methodEvaluationInfo.getTemplateName();
-        final String sql = queryManager.getQuery(templateName, parameters);
+        final String sql = methodEvaluationInfo.getQueryStrategy().getSql(parameters);
         //
         return methodEvaluationInfo.getResultStrategy().getResult(dataSourceAdapter, sql);
     }

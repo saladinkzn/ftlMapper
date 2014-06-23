@@ -26,10 +26,10 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         //
         final Field[] fields = mappedType.getDeclaredFields();
         for(Field field: fields) {
-            final Property annotation = field.getAnnotation(Property.class);
-            if(annotation != null) {
+            final Property property = field.getAnnotation(Property.class);
+            if(property != null) {
                 field.setAccessible(true);
-                final String annotatedName = annotation.value();
+                final String annotatedName = property.value();
                 final String propertyName = annotatedName.isEmpty() ? field.getName() : annotatedName;
                 properties.add(propertyName);
                 fieldMap.put(propertyName, field);

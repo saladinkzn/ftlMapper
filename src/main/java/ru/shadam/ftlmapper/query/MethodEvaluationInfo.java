@@ -2,12 +2,12 @@ package ru.shadam.ftlmapper.query;
 
 import ru.shadam.ftlmapper.mapper.AnnotationRowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
-import ru.shadam.ftlmapper.query.annotations.MappedType;
-import ru.shadam.ftlmapper.query.annotations.Mapper;
-import ru.shadam.ftlmapper.query.annotations.Param;
-import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.query.annotations.*;
+import ru.shadam.ftlmapper.query.query.RawQueryStrategy;
+import ru.shadam.ftlmapper.query.query.TemplateQueryStrategy;
 import ru.shadam.ftlmapper.query.result.ListResultStrategy;
 import ru.shadam.ftlmapper.query.result.UniqueResultStrategy;
+import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,17 +19,26 @@ import java.util.Map;
  * @author Timur Shakurov
  */
 public class MethodEvaluationInfo {
+    private final QueryManager queryManager;
     private final ResultStrategy resultStrategy;
-    private final String templateName;
+    private final QueryStrategy queryStrategy;
     private final Annotation[][] parameterAnnotations;
     //
 
-    public MethodEvaluationInfo(Method method) {
-        final Query query = method.getAnnotation(Query.class);
-        if(query == null) {
-            throw new IllegalArgumentException("Only methods annotated with @Query is supported");
+    public MethodEvaluationInfo(QueryManager queryManager, Method method) {
+        this.queryManager = queryManager;
+
+        final Template template = method.getAnnotation(Template.class);
+        if(template != null) {
+            this.queryStrategy = new TemplateQueryStrategy(queryManager, template.value());
+        } else {
+            final Query query = method.getAnnotation(Query.class);
+            if(query != null) {
+                this.queryStrategy = new RawQueryStrategy(query.value());
+            } else {
+                throw new IllegalArgumentException("Either @Query or @Template annotation must be specified");
+            }
         }
-        this.templateName = query.value();
         //
         final Mapper mapper = method.getAnnotation(Mapper.class);
         final MappedType mappedType = method.getAnnotation(MappedType.class);
@@ -81,8 +90,8 @@ public class MethodEvaluationInfo {
         return params;
     }
 
-    public String getTemplateName() {
-        return templateName;
+    public QueryStrategy getQueryStrategy() {
+        return queryStrategy;
     }
 
     public ResultStrategy getResultStrategy() {
