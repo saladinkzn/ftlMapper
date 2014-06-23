@@ -11,6 +11,8 @@ import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +41,8 @@ public class MethodEvaluationInfo {
         }
         //
         final Mapper mapper = method.getAnnotation(Mapper.class);
-        final MappedType mappedType = method.getAnnotation(MappedType.class);
-        if(mappedType == null && mapper == null) {
-            throw new IllegalArgumentException("method should be annotated with @Mapper or @MappedType");
-        }
         //
-        if(mappedType != null && mapper != null) {
-            throw new IllegalArgumentException("method should not be annotated with both @Mapper and @MappedType");
-        }
-        //
+        final Class<?> methodReturnType = method.getReturnType();
         final RowMapper<?> rowMapper;
         if(mapper != null) {
             try {
@@ -56,13 +51,28 @@ public class MethodEvaluationInfo {
                 throw new IllegalArgumentException("If method is annotated with @Mapper annotation this class should be instantiable with empty constructor");
             }
         } else {
-            rowMapper = new AnnotationRowMapper<>(mappedType.value());
+            if(methodReturnType.isAssignableFrom(List.class)) {
+                final Type genericReturnType = method.getGenericReturnType();
+                if(genericReturnType instanceof ParameterizedType) {
+                    final ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+                    final Class<?> typeParameter = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+                    rowMapper = new AnnotationRowMapper<>(typeParameter);
+                } else {
+                    throw new IllegalArgumentException("unexpected generic return type: " + genericReturnType);
+                }
+            } else {
+                if(methodReturnType.isAnnotationPresent(MappedType.class)) {
+                    rowMapper = new AnnotationRowMapper<>(methodReturnType);
+                } else {
+                    throw new IllegalArgumentException("Result must be @MappedType-annotated class");
+                }
+            }
         }
         //
         parameterAnnotations = method.getParameterAnnotations();
         //
 
-        if(method.getReturnType().isAssignableFrom(List.class)) {
+        if(methodReturnType.isAssignableFrom(List.class)) {
             resultStrategy = new ListResultStrategy<>(rowMapper);
         } else {
             resultStrategy = new UniqueResultStrategy<>(rowMapper);

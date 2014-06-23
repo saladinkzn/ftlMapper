@@ -8,14 +8,23 @@ Samples:
 ### Example 1
     public interface LolRepository {
         @Template("sql/lol/getAll.ftl")
-        @MappedType(LolInfo.class)
         public List<LolInfo> getAll();
+    }
+    
+    @MappedType
+    public class LolInfo {
+        @Property
+        private long id;
+        @Property        
+        private String name;
+        
+        public LolInfo() {}
     }
     
 ### Example 2        
     public interface LolRepository2 {
         @Template("sql/lol/getOne.ftl")
-        @MappedType(LolInfoMapper.class)
+        @Mapper(LolInfoMapper.class)
         public LolInfo getOne(@Param("id") id);
     }
     
@@ -30,6 +39,17 @@ Samples:
 ### Example 3
     public interface LolRepository3 {
         @Query("select id, name from lol where id = ?1")
-        @MappedType(LolInfo.class)
         public LolInfo getOne(@Param("id") long id);
+    }
+
+    @MappedType
+    public class LolInfo {
+        private final long id;
+        private final String name;
+
+        @Creator
+        public LolInfo(@Property("id") long id, @Property("name") String name) {
+            this.id = id;
+            this.name = name;
+        }
     }

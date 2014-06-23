@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
+@MappedType
 public interface LolRepository {
     @Query("select id, name from lol")
-    @MappedType(LolInfo.class)
     public List<LolInfo> getAll();
 }

@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
+@MappedType
 public interface LolRepository {
     @Query("select id, name from lol where id = ?1 and name = ?2")
-    @MappedType(LolInfo.class)
     public List<LolInfo> getOne(@Param("id") long id, @Param("name") String name);
 }

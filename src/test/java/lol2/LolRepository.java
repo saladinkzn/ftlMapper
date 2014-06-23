@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
+@MappedType
 public interface LolRepository {
     @Template("sql/lol2/getAll.ftl")
-    @MappedType(LolInfo.class)
     public List<LolInfo> getLols();
 }

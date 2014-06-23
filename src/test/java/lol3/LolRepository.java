@@ -10,6 +10,5 @@ import java.util.List;
  */
 public interface LolRepository {
     @Template("sql/lol3/getAll.ftl")
-    @MappedType(LolInfo.class)
     public List<LolInfo> getAll();
 }
