@@ -11,7 +11,7 @@ import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +73,7 @@ public class MethodEvaluationInfo {
     }
 
     public Map<String, Object> getParameters(Object[] args) {
-        final Map<String, Object> params = new HashMap<>();
+        final Map<String, Object> params = new LinkedHashMap<>();
         if(args == null) {
             return params;
         }

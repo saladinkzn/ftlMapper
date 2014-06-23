@@ -16,7 +16,22 @@ public class RawQueryStrategy implements QueryStrategy {
 
     @Override
     public String getSql(Map<String, Object> args) {
-        // TODO: args support
-        return template;
+        String sql = template;
+        // TODO: named parameters support
+        int i = 1;
+        if(args != null && !args.isEmpty()) {
+            for(Map.Entry<String, Object> argEntry: args.entrySet()) {
+                final Object value = argEntry.getValue();
+                final String strValue;
+                if(value instanceof String) {
+                    strValue = "'" + value + "'";
+                } else {
+                    strValue = String.valueOf(value);
+                }
+                sql = sql.replace("?" + i, strValue);
+                i++;
+            }
+        }
+        return sql;
     }
 }
