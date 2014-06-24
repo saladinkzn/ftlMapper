@@ -62,6 +62,8 @@ public class MethodEvaluationInfo {
                 } else {
                     throw new IllegalArgumentException("unexpected generic return type: " + genericReturnType);
                 }
+            } else if(methodReturnType.isArray()) {
+                classToMap = methodReturnType.getComponentType();
             } else {
                 classToMap = methodReturnType;
             }

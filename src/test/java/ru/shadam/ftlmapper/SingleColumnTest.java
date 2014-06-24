@@ -1,9 +1,9 @@
-package lol8;
+package ru.shadam.ftlmapper;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.shadam.ftlmapper.RepositoryFactory;
+import ru.shadam.ftlmapper.query.annotations.Query;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 import util.TestHelper;
@@ -14,7 +14,19 @@ import java.util.Set;
 /**
  * @author sala
  */
-public class LolTest {
+public class SingleColumnTest {
+    public static interface LolRepository {
+        @Query("select id, name from lol order by id asc")
+        public Set<Long> getIds();
+
+        @Query("select name from lol order by id asc")
+        public Set<String> getNames();
+
+        @Query("select id from lol order by id asc")
+        public Long[] getIdsArray();
+    }
+
+
     private static RepositoryFactory repositoryFactory;
 
     @BeforeClass
@@ -49,5 +61,13 @@ public class LolTest {
         final String second = iterator.next();
         Assert.assertEquals("def", second);
         System.out.println("names: " + names.toString());
+    }
+
+    @Test
+    public void testArray() throws Exception {
+        final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
+        //
+        final Long[] result = lolRepository.getIdsArray();
+        Assert.assertArrayEquals(new Long[] {1L, 2L}, result);
     }
 }

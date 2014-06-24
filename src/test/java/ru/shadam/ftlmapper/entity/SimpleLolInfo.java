@@ -1,13 +1,13 @@
-package lol;
+package ru.shadam.ftlmapper.entity;
 
 /**
- * Simple pojo
+ * @author Timur Shakurov
  */
-public class LolInfo {
+public class SimpleLolInfo {
     private long id;
     private String name;
 
-    public LolInfo(long id, String name) {
+    public SimpleLolInfo(long id, String name) {
         this.id = id;
         this.name = name;
     }

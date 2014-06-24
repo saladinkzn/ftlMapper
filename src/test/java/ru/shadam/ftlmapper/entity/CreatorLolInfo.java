@@ -1,17 +1,19 @@
-package lol8;
+package ru.shadam.ftlmapper.entity;
 
 import ru.shadam.ftlmapper.mapper.annotations.Creator;
 import ru.shadam.ftlmapper.mapper.annotations.Property;
+import ru.shadam.ftlmapper.query.annotations.MappedType;
 
 /**
- * @author sala
+ * @author Timur Shakurov
  */
-public class LolInfo {
+@MappedType
+public class CreatorLolInfo {
     private final long id;
     private final String name;
 
     @Creator
-    public LolInfo(@Property("id") long id, @Property("name") String name) {
+    public CreatorLolInfo(@Property("id") long id, @Property("name") String name) {
         this.id = id;
         this.name = name;
     }

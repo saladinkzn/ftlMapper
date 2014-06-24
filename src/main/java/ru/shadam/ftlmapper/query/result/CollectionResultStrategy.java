@@ -4,6 +4,7 @@ import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.query.ResultStrategy;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 
+import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
  */
 public class CollectionResultStrategy<T> implements ResultStrategy<T> {
     public static boolean isSupported(Class<?> clazz) {
-        return (clazz.equals(List.class) || clazz.equals(Set.class));
+        return (clazz.equals(List.class) || clazz.equals(Set.class) || clazz.isArray());
     }
 
     private RowMapper<T> rowMapper;
@@ -33,6 +34,9 @@ public class CollectionResultStrategy<T> implements ResultStrategy<T> {
             return dataSourceAdapter.query(sql, rowMapper);
         } else if (targetClass.equals(Set.class)) {
             return dataSourceAdapter.queryForSet(sql, rowMapper);
+        } else if (targetClass.isArray()) {
+            final List<T> list = dataSourceAdapter.query(sql, rowMapper);
+            return list.toArray((T[])Array.newInstance(targetClass.getComponentType(), list.size()));
         } else {
             throw new IllegalStateException("targetClass is not supported");
         }
