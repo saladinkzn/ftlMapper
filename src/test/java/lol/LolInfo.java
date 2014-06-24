@@ -20,4 +20,12 @@ public class LolInfo {
         sb.append('}');
         return sb.toString();
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

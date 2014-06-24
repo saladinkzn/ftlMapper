@@ -31,7 +31,7 @@ public class QueryInvocationHandler implements InvocationHandler {
             try {
                 methodInfo.put(method, new MethodEvaluationInfo(queryManager, method));
             } catch (Exception ex) {
-                logger.error("An exception has occured while gathering method evaluation information for method: " + method.getName());
+                logger.error("An exception has occurred while gathering method evaluation information for method: " + method.getName());
                 logger.error(ex.getMessage(), ex);
             }
         }

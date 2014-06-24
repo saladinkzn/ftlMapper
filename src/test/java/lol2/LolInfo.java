@@ -1,10 +1,12 @@
 package lol2;
 
 import ru.shadam.ftlmapper.mapper.annotations.Property;
+import ru.shadam.ftlmapper.query.annotations.MappedType;
 
 /**
  * @author Timur Shakurov
  */
+@MappedType
 public class LolInfo {
     @Property("id")
     private long id;
@@ -22,5 +24,13 @@ public class LolInfo {
         sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }

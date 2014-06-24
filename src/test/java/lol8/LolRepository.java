@@ -10,4 +10,7 @@ import java.util.Set;
 public interface LolRepository {
     @Query("select id, name from lol order by id asc")
     public Set<Long> getIds();
+
+    @Query("select name from lol order by id asc")
+    public Set<String> getNames();
 }
