@@ -17,16 +17,32 @@ import java.util.*;
  * @author Timur Shakurov
  */
 public class AnnotationRowMapper<T> implements RowMapper<T> {
-    private static class EmbeddedInfo {
-        private final String prefix;
-        private final Class<?> clazz;
-        private final Field field;
-        //
+    private static class BaseEmbeddedInfo {
+        public final String prefix;
+        public final Class<?> clazz;
 
-        private EmbeddedInfo(String prefix, Class<?> clazz, Field field) {
+        public BaseEmbeddedInfo(String prefix, Class<?> clazz) {
             this.prefix = prefix;
             this.clazz = clazz;
+        }
+    }
+
+    private static class EmbeddedFieldInfo extends BaseEmbeddedInfo {
+        public final Field field;
+        //
+
+        private EmbeddedFieldInfo(String prefix, Class<?> clazz, Field field) {
+            super(prefix, clazz);
             this.field = field;
+        }
+    }
+
+    private static class EmbeddedParamInfo extends BaseEmbeddedInfo {
+        public final int index;
+
+        private EmbeddedParamInfo(String prefix, Class<?> clazz, int index) {
+            super(prefix, clazz);
+            this.index = index;
         }
     }
 
@@ -41,7 +57,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         //
         final Set<String> properties = new HashSet<>();
         //
-        final List<EmbeddedInfo> embeddeds = new ArrayList<>();
+        final List<EmbeddedFieldInfo> embeddeds = new ArrayList<>();
         //
         final Field[] fields = mappedType.getDeclaredFields();
         for(Field field: fields) {
@@ -61,7 +77,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                 if(!clazz.isAnnotationPresent(MappedType.class)) {
                     throw new IllegalStateException("Field mapped with @Embedded should be of class mapped with @MappedType");
                 }
-                embeddeds.add(new EmbeddedInfo(embeddedPrefix, clazz, field));
+                embeddeds.add(new EmbeddedFieldInfo(embeddedPrefix, clazz, field));
             }
         }
         //
@@ -72,11 +88,12 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
             if(creator != null) {
                 final Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
                 final String[] creatorArgs = new String[parameterAnnotations.length];
+                final List<EmbeddedParamInfo> embeddedParamInfos = new ArrayList<>();
                 for (int i = 0; i < parameterAnnotations.length; i++) {
-                    boolean annotatedWithProperty = false;
+                    boolean properlyAnnotated = false;
                     for(Annotation annotation: parameterAnnotations[i]) {
                         if(annotation instanceof Property) {
-                            annotatedWithProperty = true;
+                            properlyAnnotated = true;
                             final Property param = ((Property) annotation);
                             final String paramName = param.value();
                             if(paramName.isEmpty()) {
@@ -85,13 +102,21 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                             creatorArgs[i] = prefix + paramName;
                             break;
                         }
+                        if(annotation instanceof Embedded) {
+                            properlyAnnotated = true;
+                            final Embedded embedded = ((Embedded) annotation);
+                            final String embeddedPrefix = embedded.value();
+                            final Class<?> embeddedType = constructor.getParameterTypes()[i];
+                            final EmbeddedParamInfo embeddedParamInfo = new EmbeddedParamInfo(embeddedPrefix, embeddedType, i);
+                            embeddedParamInfos.add(embeddedParamInfo);
+                        }
                     }
-                    if(!annotatedWithProperty) {
+                    if(!properlyAnnotated) {
                         throw new IllegalArgumentException("@Creator constructor must have all parameters mapped with @Property");
                     }
                 }
                 if(creationStrategy == null) {
-                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, fieldMap, embeddeds);
+                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, fieldMap, embeddeds, embeddedParamInfos);
                 } else {
                     throw new IllegalArgumentException("Only one constructor can be mapped with @Creator");
                 }
@@ -121,9 +146,9 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         protected final Constructor<T> constructor;
         private final Map<String, Field> fieldMap;
         private final Set<String> properties;
-        private final List<EmbeddedInfo> embeddeds;
+        private final List<EmbeddedFieldInfo> embeddeds;
 
-        private DefaultCreationStrategy(Constructor<T> constructor, Map<String, Field> fieldMap, Set<String> properties, List<EmbeddedInfo> embeddeds) {
+        private DefaultCreationStrategy(Constructor<T> constructor, Map<String, Field> fieldMap, Set<String> properties, List<EmbeddedFieldInfo> embeddeds) {
             this.constructor = constructor;
             this.fieldMap = fieldMap;
             this.properties = properties;
@@ -148,7 +173,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                 field.set(instance, value);
             }
             //
-            for(EmbeddedInfo embeddedInfo : embeddeds) {
+            for(EmbeddedFieldInfo embeddedInfo : embeddeds) {
                 final AnnotationRowMapper<?> rowMapper = new AnnotationRowMapper<>(embeddedInfo.prefix, embeddedInfo.clazz);
                 final Object value = rowMapper.mapRow(resultSet);
                 embeddedInfo.field.set(instance, value);
@@ -158,10 +183,13 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
 
     public static class AnnotatedConstructorCreationStrategy<T> extends DefaultCreationStrategy<T> {
         private final String[] constructorParams;
+        private final List<EmbeddedParamInfo> embeddedParamInfos;
+
         //
-        public AnnotatedConstructorCreationStrategy(Constructor<T> constructor, String[] constructorParams, Set<String> properties, Map<String, Field> fieldMap, List<EmbeddedInfo> embeddeds) {
+        public AnnotatedConstructorCreationStrategy(Constructor<T> constructor, String[] constructorParams, Set<String> properties, Map<String, Field> fieldMap, List<EmbeddedFieldInfo> embeddeds, List<EmbeddedParamInfo> embeddedParamInfos) {
             super(constructor, fieldMap, properties, embeddeds);
             this.constructorParams = constructorParams;
+            this.embeddedParamInfos = embeddedParamInfos;
         }
 
         @Override
@@ -169,9 +197,18 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
             final Object[] args = new Object[constructorParams.length];
             for (int i = 0; i < constructorParams.length; i++) {
                 final String constructorParam = constructorParams[i];
-                final Object value = resultSet.getObject(constructorParam);
-                args[i] = value;
+                if(constructorParam != null) {
+                    final Object value = resultSet.getObject(constructorParam);
+                    args[i] = value;
+                }
             }
+            for(EmbeddedParamInfo embeddedParamInfo: embeddedParamInfos) {
+                final String embeddedPrefix = embeddedParamInfo.prefix;
+                final Class<?> embeddedType = embeddedParamInfo.clazz;
+                final Object value = new AnnotationRowMapper<>(embeddedPrefix, embeddedType).mapRow(resultSet);
+                args[embeddedParamInfo.index] = value;
+            }
+            //
             try {
                 final T instance = constructor.newInstance(args);
                 setMappedFields(resultSet, instance);
@@ -181,5 +218,4 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
             }
         }
     }
-
 }

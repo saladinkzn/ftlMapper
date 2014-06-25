@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * @author Timur Shakurov
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Embedded {
     /**
      * Префикс
