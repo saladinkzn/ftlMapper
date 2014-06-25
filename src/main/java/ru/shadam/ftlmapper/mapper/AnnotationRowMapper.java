@@ -1,7 +1,9 @@
 package ru.shadam.ftlmapper.mapper;
 
 import ru.shadam.ftlmapper.mapper.annotations.Creator;
+import ru.shadam.ftlmapper.mapper.annotations.Embedded;
 import ru.shadam.ftlmapper.mapper.annotations.Property;
+import ru.shadam.ftlmapper.query.annotations.MappedType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -9,20 +11,37 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Timur Shakurov
  */
 public class AnnotationRowMapper<T> implements RowMapper<T> {
+    private static class EmbeddedInfo {
+        private final String prefix;
+        private final Class<?> clazz;
+        private final Field field;
+        //
+
+        private EmbeddedInfo(String prefix, Class<?> clazz, Field field) {
+            this.prefix = prefix;
+            this.clazz = clazz;
+            this.field = field;
+        }
+    }
+
     private CreationStrategy<T> creationStrategy;
 
     public AnnotationRowMapper(Class<T> mappedType) {
-        Set<String> properties = new HashSet<>();
-        Map<String, Field> fieldMap = new HashMap<>();
+        this("", mappedType);
+    }
+
+    public AnnotationRowMapper(String prefix, Class<T> mappedType) {
+        final Map<String, Field> fieldMap = new HashMap<>();
+        //
+        final Set<String> properties = new HashSet<>();
+        //
+        final List<EmbeddedInfo> embeddeds = new ArrayList<>();
         //
         final Field[] fields = mappedType.getDeclaredFields();
         for(Field field: fields) {
@@ -30,9 +49,19 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
             if(property != null) {
                 field.setAccessible(true);
                 final String annotatedName = property.value();
-                final String propertyName = annotatedName.isEmpty() ? field.getName() : annotatedName;
+                final String propertyName = prefix + (annotatedName.isEmpty() ? field.getName() : annotatedName);
                 properties.add(propertyName);
                 fieldMap.put(propertyName, field);
+            }
+            final Embedded embedded = field.getAnnotation(Embedded.class);
+            if(embedded != null) {
+                field.setAccessible(true);
+                final String embeddedPrefix = prefix + embedded.value();
+                final Class<?> clazz = field.getType();
+                if(!clazz.isAnnotationPresent(MappedType.class)) {
+                    throw new IllegalStateException("Field mapped with @Embedded should be of class mapped with @MappedType");
+                }
+                embeddeds.add(new EmbeddedInfo(embeddedPrefix, clazz, field));
             }
         }
         //
@@ -53,7 +82,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                             if(paramName.isEmpty()) {
                                 throw new IllegalArgumentException("constructor arg mapped with @Property must have value");
                             }
-                            creatorArgs[i] = paramName;
+                            creatorArgs[i] = prefix + paramName;
                             break;
                         }
                     }
@@ -62,7 +91,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                     }
                 }
                 if(creationStrategy == null) {
-                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, fieldMap);
+                    creationStrategy = new AnnotatedConstructorCreationStrategy<T>(constructor, creatorArgs, properties, fieldMap, embeddeds);
                 } else {
                     throw new IllegalArgumentException("Only one constructor can be mapped with @Creator");
                 }
@@ -71,7 +100,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         if(creationStrategy == null) {
             try {
                 final Constructor<T> defaultConstructor = mappedType.getConstructor();
-                creationStrategy = new DefaultCreationStrategy<>(defaultConstructor, fieldMap, properties);
+                creationStrategy = new DefaultCreationStrategy<>(defaultConstructor, fieldMap, properties, embeddeds);
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("if no constructor was mapped with @Creator there should be a default constructor");
             }
@@ -92,11 +121,13 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         protected final Constructor<T> constructor;
         private final Map<String, Field> fieldMap;
         private final Set<String> properties;
+        private final List<EmbeddedInfo> embeddeds;
 
-        private DefaultCreationStrategy(Constructor<T> constructor, Map<String, Field> fieldMap, Set<String> properties) {
+        private DefaultCreationStrategy(Constructor<T> constructor, Map<String, Field> fieldMap, Set<String> properties, List<EmbeddedInfo> embeddeds) {
             this.constructor = constructor;
             this.fieldMap = fieldMap;
             this.properties = properties;
+            this.embeddeds = embeddeds;
         }
 
         @Override
@@ -116,14 +147,20 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
                 final Field field = fieldMap.get(property);
                 field.set(instance, value);
             }
+            //
+            for(EmbeddedInfo embeddedInfo : embeddeds) {
+                final AnnotationRowMapper<?> rowMapper = new AnnotationRowMapper<>(embeddedInfo.prefix, embeddedInfo.clazz);
+                final Object value = rowMapper.mapRow(resultSet);
+                embeddedInfo.field.set(instance, value);
+            }
         }
     }
 
     public static class AnnotatedConstructorCreationStrategy<T> extends DefaultCreationStrategy<T> {
         private final String[] constructorParams;
         //
-        public AnnotatedConstructorCreationStrategy(Constructor<T> constructor, String[] constructorParams, Set<String> properties, Map<String, Field> fieldMap) {
-            super(constructor, fieldMap, properties);
+        public AnnotatedConstructorCreationStrategy(Constructor<T> constructor, String[] constructorParams, Set<String> properties, Map<String, Field> fieldMap, List<EmbeddedInfo> embeddeds) {
+            super(constructor, fieldMap, properties, embeddeds);
             this.constructorParams = constructorParams;
         }
 

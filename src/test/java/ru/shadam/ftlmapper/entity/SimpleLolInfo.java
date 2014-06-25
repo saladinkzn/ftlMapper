@@ -12,6 +12,14 @@ public class SimpleLolInfo {
         this.name = name;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("LolInfo{");
@@ -19,13 +27,5 @@ public class SimpleLolInfo {
         sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 }

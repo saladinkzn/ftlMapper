@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * // TODO: refactor into factory.
+ *
  * @author Timur Shakurov
  */
 public class CollectionResultStrategy<T> implements ResultStrategy<T> {
