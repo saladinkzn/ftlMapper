@@ -2,6 +2,7 @@ package ru.shadam.ftlmapper.query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shadam.ftlmapper.mapper.RowMapperFactory;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 
@@ -22,14 +23,14 @@ public class QueryInvocationHandler implements InvocationHandler {
 
     private Map<Method, MethodEvaluationInfo> methodInfo;
 
-    public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
+    public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter, RowMapperFactory rowMapperFactory) {
         this.dataSourceAdapter = dataSourceAdapter;
         //
         methodInfo = new HashMap<>();
         final Method[] methods = targetClass.getDeclaredMethods();
         for(Method method: methods) {
             try {
-                methodInfo.put(method, new MethodEvaluationInfo(queryManager, method));
+                methodInfo.put(method, new MethodEvaluationInfo(queryManager, method, rowMapperFactory));
             } catch (Exception ex) {
                 logger.error("An exception has occurred while gathering method evaluation information for method: " + method.getName());
                 logger.error(ex.getMessage(), ex);
