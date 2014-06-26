@@ -43,8 +43,14 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         //
         final List<EmbeddedInfo> embeddeds = new ArrayList<>();
         //
-        final Field[] fields = mappedType.getDeclaredFields();
-        for(Field field: fields) {
+        final List<Field> fieldList = new ArrayList<>();
+        for(Class<? super T> ancestor = mappedType; ancestor != null; ancestor = ancestor.getSuperclass()) {
+            if(ancestor.isAnnotationPresent(MappedType.class)) {
+                final Field[] fields = ancestor.getDeclaredFields();
+                Collections.addAll(fieldList, fields);
+            }
+        }
+        for(Field field: fieldList) {
             final Property property = field.getAnnotation(Property.class);
             if(property != null) {
                 field.setAccessible(true);

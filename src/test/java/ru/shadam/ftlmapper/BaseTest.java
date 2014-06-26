@@ -8,7 +8,7 @@ import util.TestHelper;
 /**
  * @author Timur Shakurov
  */
-public class BaseTest {
+public abstract class BaseTest {
     protected static RepositoryFactory repositoryFactory;
     //
     @BeforeClass
