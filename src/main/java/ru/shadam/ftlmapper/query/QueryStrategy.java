@@ -1,10 +1,10 @@
 package ru.shadam.ftlmapper.query;
 
-import java.util.Map;
+import ru.shadam.ftlmapper.util.PreparedStatementCreator;
 
 /**
  * @author Timur Shakurov
  */
 public interface QueryStrategy {
-    public String getSql(Map<String, Object> args);
+    public PreparedStatementCreator getSql(Object[] args);
 }

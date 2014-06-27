@@ -2,8 +2,8 @@ package ru.shadam.ftlmapper.query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shadam.ftlmapper.mapper.RowMapperFactory;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
+import ru.shadam.ftlmapper.util.PreparedStatementCreator;
 import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.reflect.InvocationHandler;
@@ -23,7 +23,7 @@ public class QueryInvocationHandler implements InvocationHandler {
 
     private Map<Method, MethodEvaluationInfo> methodInfo;
 
-    public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter, RowMapperFactory rowMapperFactory) {
+    public QueryInvocationHandler(Class<?> targetClass, QueryManager queryManager, DataSourceAdapter dataSourceAdapter, ResultSetExtractorFactory rowMapperFactory) {
         this.dataSourceAdapter = dataSourceAdapter;
         //
         methodInfo = new HashMap<>();
@@ -45,11 +45,10 @@ public class QueryInvocationHandler implements InvocationHandler {
         }
         //
         final MethodEvaluationInfo methodEvaluationInfo = methodInfo.get(method);
-        final Map<String, Object> parameters = methodEvaluationInfo.getParameters(args);
         //
-        final String sql = methodEvaluationInfo.getQueryStrategy().getSql(parameters);
+        final PreparedStatementCreator psc = methodEvaluationInfo.getQueryStrategy().getSql(args);
         //
-        return methodEvaluationInfo.getResultStrategy().getResult(dataSourceAdapter, sql);
+        return dataSourceAdapter.query(psc, methodEvaluationInfo.getResultSetExtractor());
     }
 
 }

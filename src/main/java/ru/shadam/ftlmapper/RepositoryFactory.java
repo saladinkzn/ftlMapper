@@ -8,6 +8,7 @@ import ru.shadam.ftlmapper.mapper.single.SingleLongColumnRowMapper;
 import ru.shadam.ftlmapper.mapper.single.SingleShortColumnRowMapper;
 import ru.shadam.ftlmapper.mapper.single.SingleStringColumnRowMapper;
 import ru.shadam.ftlmapper.query.QueryInvocationHandler;
+import ru.shadam.ftlmapper.query.ResultSetExtractorFactory;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 
@@ -23,11 +24,11 @@ public class RepositoryFactory {
 
     private QueryManager queryManager;
     private DataSourceAdapter dataSourceAdapter;
-    private RowMapperFactory rowMapperFactory;
+    private ResultSetExtractorFactory resultSetExtractorFactory;
 
     {
         // Default row mapper factory.
-        rowMapperFactory = new RowMapperFactory();
+        final RowMapperFactory rowMapperFactory = new RowMapperFactory();
         // Byte
         rowMapperFactory.register(byte.class, new SingleByteColumnRowMapper(false));
         rowMapperFactory.register(Byte.class, new SingleByteColumnRowMapper(true));
@@ -39,6 +40,8 @@ public class RepositoryFactory {
         rowMapperFactory.register(Long.class, new SingleLongColumnRowMapper(true));
         // String
         rowMapperFactory.register(String.class, new SingleStringColumnRowMapper());
+        //
+        resultSetExtractorFactory = new ResultSetExtractorFactory(rowMapperFactory);
     }
 
 
@@ -47,8 +50,8 @@ public class RepositoryFactory {
         this.dataSourceAdapter = dataSourceAdapter;
     }
 
-    public void setRowMapperFactory(RowMapperFactory rowMapperFactory) {
-        this.rowMapperFactory = rowMapperFactory;
+    public void setRowMapperFactory(ResultSetExtractorFactory resultSetExtractorFactory) {
+        this.resultSetExtractorFactory = resultSetExtractorFactory;
     }
 
     public <T> T getMapper(Class<T> clazz) {
@@ -59,7 +62,7 @@ public class RepositoryFactory {
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},
-                new QueryInvocationHandler(clazz, queryManager, dataSourceAdapter, rowMapperFactory)
+                new QueryInvocationHandler(clazz, queryManager, dataSourceAdapter, resultSetExtractorFactory)
         ));
     }
 
