@@ -1,9 +1,11 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ftlmapper.mapper.AnnotationRowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
-import ru.shadam.ftlmapper.mapper.single.*;
-import ru.shadam.ftlmapper.query.annotations.*;
+import ru.shadam.ftlmapper.mapper.RowMapperFactory;
+import ru.shadam.ftlmapper.query.annotations.Mapper;
+import ru.shadam.ftlmapper.query.annotations.Param;
+import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.query.annotations.Template;
 import ru.shadam.ftlmapper.query.query.RawQueryStrategy;
 import ru.shadam.ftlmapper.query.query.TemplateQueryStrategy;
 import ru.shadam.ftlmapper.query.result.CollectionResultStrategy;
@@ -28,7 +30,7 @@ public class MethodEvaluationInfo {
     private final Annotation[][] parameterAnnotations;
     //
 
-    public MethodEvaluationInfo(QueryManager queryManager, Method method) {
+    public MethodEvaluationInfo(QueryManager queryManager, Method method, RowMapperFactory rowMapperFactory) {
 
         final Template template = method.getAnnotation(Template.class);
         if(template != null) {
@@ -53,12 +55,12 @@ public class MethodEvaluationInfo {
                 throw new IllegalArgumentException("If method is annotated with @Mapper annotation this class should be instantiable with empty constructor");
             }
         } else {
-            final Class<?> classToMap;
+            final Type classToMap;
             if(methodReturnType.equals(List.class) || methodReturnType.equals(Set.class)) {
                 final Type genericReturnType = method.getGenericReturnType();
                 if(genericReturnType instanceof ParameterizedType) {
                     final ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-                    classToMap = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+                    classToMap = parameterizedType.getActualTypeArguments()[0];
                 } else {
                     throw new IllegalArgumentException("unexpected generic return type: " + genericReturnType);
                 }
@@ -67,22 +69,12 @@ public class MethodEvaluationInfo {
             } else {
                 classToMap = methodReturnType;
             }
-            if(classToMap.isAnnotationPresent(MappedType.class)) {
-                rowMapper = new AnnotationRowMapper<>(classToMap);
+            //
+            if(rowMapperFactory.supports(classToMap)) {
+                rowMapper = rowMapperFactory.getRowMapper(classToMap);
+                assert rowMapper != null;
             } else {
-                if(Long.class.equals(classToMap) || long.class.equals(classToMap)) {
-                    rowMapper = new SingleLongColumnRowMapper(Long.class.equals(classToMap));
-                } else if (Integer.class.equals(classToMap) || int.class.equals(classToMap)) {
-                    rowMapper = new SingleIntegerColumnRowMapper(Integer.class.equals(classToMap));
-                } else if (Short.class.equals(classToMap) || short.class.equals(classToMap)) {
-                    rowMapper = new SingleShortColumnRowMapper(Short.class.equals(classToMap));
-                } else if (Byte.class.equals(classToMap) || byte.class.equals(classToMap)) {
-                    rowMapper = new SingleByteColumnRowMapper(Short.class.equals(classToMap));
-                } else if (String.class.equals(classToMap)) {
-                    rowMapper = new SingleStringColumnRowMapper();
-                } else {
-                    throw new IllegalArgumentException("Result must be @MappedType-annotated class");
-                }
+                throw new IllegalArgumentException("Result must be @MappedType-annotated class");
             }
         }
         //

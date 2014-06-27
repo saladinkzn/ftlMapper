@@ -2,6 +2,11 @@ package ru.shadam.ftlmapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shadam.ftlmapper.mapper.RowMapperFactory;
+import ru.shadam.ftlmapper.mapper.single.SingleByteColumnRowMapper;
+import ru.shadam.ftlmapper.mapper.single.SingleLongColumnRowMapper;
+import ru.shadam.ftlmapper.mapper.single.SingleShortColumnRowMapper;
+import ru.shadam.ftlmapper.mapper.single.SingleStringColumnRowMapper;
 import ru.shadam.ftlmapper.query.QueryInvocationHandler;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
@@ -18,10 +23,32 @@ public class RepositoryFactory {
 
     private QueryManager queryManager;
     private DataSourceAdapter dataSourceAdapter;
+    private RowMapperFactory rowMapperFactory;
+
+    {
+        // Default row mapper factory.
+        rowMapperFactory = new RowMapperFactory();
+        // Byte
+        rowMapperFactory.register(byte.class, new SingleByteColumnRowMapper(false));
+        rowMapperFactory.register(Byte.class, new SingleByteColumnRowMapper(true));
+        // Short
+        rowMapperFactory.register(short.class, new SingleShortColumnRowMapper(false));
+        rowMapperFactory.register(Short.class, new SingleShortColumnRowMapper(true));
+        // Long
+        rowMapperFactory.register(long.class, new SingleLongColumnRowMapper(false));
+        rowMapperFactory.register(Long.class, new SingleLongColumnRowMapper(true));
+        // String
+        rowMapperFactory.register(String.class, new SingleStringColumnRowMapper());
+    }
+
 
     public RepositoryFactory(QueryManager queryManager, DataSourceAdapter dataSourceAdapter) {
         this.queryManager = queryManager;
         this.dataSourceAdapter = dataSourceAdapter;
+    }
+
+    public void setRowMapperFactory(RowMapperFactory rowMapperFactory) {
+        this.rowMapperFactory = rowMapperFactory;
     }
 
     public <T> T getMapper(Class<T> clazz) {
@@ -32,7 +59,7 @@ public class RepositoryFactory {
         return clazz.cast(Proxy.newProxyInstance(
                 clazz.getClassLoader(),
                 new Class[]{clazz},
-                new QueryInvocationHandler(clazz, queryManager, dataSourceAdapter)
+                new QueryInvocationHandler(clazz, queryManager, dataSourceAdapter, rowMapperFactory)
         ));
     }
 

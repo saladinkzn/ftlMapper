@@ -6,13 +6,13 @@ import java.sql.SQLException;
 /**
  * @author Timur Shakurov
  */
-public class SingleShortColumnRowMapper extends SingleColumnRowMapper {
+public class SingleShortColumnRowMapper extends SingleColumnRowMapper<Short> {
     public SingleShortColumnRowMapper(boolean allowNull) {
         super(allowNull);
     }
 
     @Override
-    protected Object getValue(ResultSet resultSet) throws SQLException {
+    protected Short getValue(ResultSet resultSet) throws SQLException {
         return resultSet.getShort(1);
     }
 }
