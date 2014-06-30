@@ -1,5 +1,6 @@
 package ru.shadam.ftlmapper.query.extractors;
 
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.query.ResultSetExtractor;
 
@@ -19,7 +20,7 @@ public class UniqueResultExtractor<T> implements ResultSetExtractor<T> {
     @Override
     public T extractResult(ResultSet resultSet) throws SQLException {
         if(resultSet.next()) {
-            return rowMapper.mapRow(resultSet);
+            return rowMapper.mapRow(new ResultSetWrapper(resultSet));
         } else {
             return null;
         }

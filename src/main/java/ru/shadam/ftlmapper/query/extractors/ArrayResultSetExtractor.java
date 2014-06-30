@@ -1,5 +1,6 @@
 package ru.shadam.ftlmapper.query.extractors;
 
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.query.ResultSetExtractor;
 
@@ -24,8 +25,9 @@ public class ArrayResultSetExtractor implements ResultSetExtractor<Object> {
     @Override
     public Object extractResult(ResultSet resultSet) throws SQLException {
         final List<Object> resultList = new ArrayList<>();
+        final ResultSetWrapper resultSetWrapper = new ResultSetWrapper(resultSet);
         while (resultSet.next()) {
-            resultList.add(rowMapper.mapRow(resultSet));
+            resultList.add(rowMapper.mapRow(resultSetWrapper));
         }
         final Object array = Array.newInstance(clazz, resultList.size());
         for(int i = 0; i < resultList.size(); i++) {

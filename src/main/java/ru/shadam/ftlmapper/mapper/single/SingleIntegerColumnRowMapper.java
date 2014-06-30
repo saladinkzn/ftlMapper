@@ -1,6 +1,7 @@
 package ru.shadam.ftlmapper.mapper.single;
 
-import java.sql.ResultSet;
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
+
 import java.sql.SQLException;
 
 /**
@@ -13,7 +14,7 @@ public class SingleIntegerColumnRowMapper extends SingleColumnRowMapper<Integer>
     }
 
     @Override
-    protected Integer getValue(ResultSet resultSet) throws SQLException {
+    protected Integer getValue(ResultSetWrapper resultSet) throws SQLException {
         return resultSet.getInt(1);
     }
 }

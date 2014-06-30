@@ -1,8 +1,8 @@
 package ru.shadam.ftlmapper.mapper.single;
 
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -16,10 +16,10 @@ public abstract class SingleColumnRowMapper<T> implements RowMapper<T> {
     }
 
     @Override
-    public T mapRow(ResultSet resultSet) throws SQLException {
+    public T mapRow(ResultSetWrapper resultSet) throws SQLException {
         final T value = getValue(resultSet);
         return allowNull && resultSet.wasNull() ? null : value;
     }
 
-    protected abstract T getValue(ResultSet resultSet) throws SQLException;
+    protected abstract T getValue(ResultSetWrapper resultSet) throws SQLException;
 }

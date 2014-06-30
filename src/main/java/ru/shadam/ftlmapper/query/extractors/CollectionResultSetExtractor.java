@@ -1,5 +1,6 @@
 package ru.shadam.ftlmapper.query.extractors;
 
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.query.ResultSetExtractor;
 
@@ -22,8 +23,9 @@ public abstract class CollectionResultSetExtractor<T, U extends Collection<T>> i
     @Override
     public U extractResult(ResultSet resultSet) throws SQLException {
         final U collection = getCollection();
+        final ResultSetWrapper resultSetWrapper = new ResultSetWrapper(resultSet);
         while (resultSet.next()) {
-            collection.add(rowMapper.mapRow(resultSet));
+            collection.add(rowMapper.mapRow(resultSetWrapper));
         }
         return collection;
     }

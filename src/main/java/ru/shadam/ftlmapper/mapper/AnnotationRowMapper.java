@@ -9,7 +9,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -115,12 +114,12 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
     }
 
     @Override
-    public T mapRow(ResultSet resultSet) throws SQLException {
+    public T mapRow(ResultSetWrapper resultSet) throws SQLException {
         return creationStrategy.create(resultSet);
     }
 
     private static interface CreationStrategy<T> {
-        public T create(ResultSet resultSet) throws SQLException;
+        public T create(ResultSetWrapper resultSet) throws SQLException;
     }
 
     private static class DefaultCreationStrategy<T> implements CreationStrategy<T> {
@@ -137,7 +136,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         }
 
         @Override
-        public T create(ResultSet resultSet) throws SQLException {
+        public T create(ResultSetWrapper resultSet) throws SQLException {
             try {
                 final T instance = constructor.newInstance();
                 setMappedFields(resultSet, instance);
@@ -147,7 +146,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
             }
         }
 
-        protected void setMappedFields(ResultSet resultSet, T instance) throws IllegalAccessException, SQLException {
+        protected void setMappedFields(ResultSetWrapper resultSet, T instance) throws IllegalAccessException, SQLException {
             for(String property: properties) {
                 final Object value = resultSet.getObject(property);
                 final Field field = fieldMap.get(property);
@@ -171,7 +170,7 @@ public class AnnotationRowMapper<T> implements RowMapper<T> {
         }
 
         @Override
-        public T create(ResultSet resultSet) throws SQLException {
+        public T create(ResultSetWrapper resultSet) throws SQLException {
             final Object[] args = new Object[constructorParams.length];
             for (int i = 0; i < constructorParams.length; i++) {
                 final String constructorParam = constructorParams[i];

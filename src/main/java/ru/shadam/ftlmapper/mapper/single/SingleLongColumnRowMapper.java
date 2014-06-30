@@ -1,6 +1,7 @@
 package ru.shadam.ftlmapper.mapper.single;
 
-import java.sql.ResultSet;
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
+
 import java.sql.SQLException;
 
 /**
@@ -12,7 +13,7 @@ public class SingleLongColumnRowMapper extends SingleColumnRowMapper<Long> {
     }
 
     @Override
-    protected Long getValue(ResultSet resultSet) throws SQLException {
+    protected Long getValue(ResultSetWrapper resultSet) throws SQLException {
         return resultSet.getLong(1);
     }
 }
