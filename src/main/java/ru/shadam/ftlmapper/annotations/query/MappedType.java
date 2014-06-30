@@ -1,4 +1,4 @@
-package ru.shadam.ftlmapper.query.annotations;
+package ru.shadam.ftlmapper.annotations.query;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

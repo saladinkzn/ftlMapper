@@ -2,7 +2,7 @@ package ru.shadam.ftlmapper.query;
 
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapperFactory;
-import ru.shadam.ftlmapper.query.annotations.Mapper;
+import ru.shadam.ftlmapper.annotations.query.Mapper;
 import ru.shadam.ftlmapper.query.extractors.ArrayResultSetExtractor;
 import ru.shadam.ftlmapper.query.extractors.ListResultSetExtractor;
 import ru.shadam.ftlmapper.query.extractors.SetResultSetExtractor;

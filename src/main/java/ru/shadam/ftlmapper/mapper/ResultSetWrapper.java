@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * Wraps ResultSet to hide next() and close() calls
+ *
  * @author sala
  */
 public final class ResultSetWrapper {

@@ -1,6 +1,7 @@
 package ru.shadam.ftlmapper.mapper;
 
-import ru.shadam.ftlmapper.query.annotations.MappedType;
+import ru.shadam.ftlmapper.annotations.query.MappedType;
+import ru.shadam.ftlmapper.mapper.annotation.AnnotationRowMapperFactory;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,6 +13,8 @@ import java.util.Map;
  */
 public class RowMapperFactory {
     private Map<Class<?>, RowMapper<?>> mapperMap;
+
+    private AnnotationRowMapperFactory annotationRowMapperFactory = new AnnotationRowMapperFactory();
 
     public RowMapperFactory() {
         mapperMap = new HashMap<>();
@@ -45,7 +48,7 @@ public class RowMapperFactory {
         if(mapperMap.containsKey(clazz)) {
             return mapperMap.get(clazz);
         }
-        return new AnnotationRowMapper<>(clazz);
+        return annotationRowMapperFactory.annotationRowMapper("", clazz);
     }
 
     public <T> void register(Class<T> clazz, RowMapper<? extends T> mapper) {

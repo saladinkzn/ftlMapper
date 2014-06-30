@@ -1,8 +1,8 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ftlmapper.query.annotations.Param;
-import ru.shadam.ftlmapper.query.annotations.Query;
-import ru.shadam.ftlmapper.query.annotations.Template;
+import ru.shadam.ftlmapper.annotations.query.Param;
+import ru.shadam.ftlmapper.annotations.query.Query;
+import ru.shadam.ftlmapper.annotations.query.Template;
 import ru.shadam.ftlmapper.query.query.RawQueryStrategy;
 import ru.shadam.ftlmapper.query.query.TemplateQueryStrategy;
 import ru.shadam.ftlmapper.util.QueryManager;

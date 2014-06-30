@@ -1,7 +1,7 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.mapper.annotations.Property;
-import ru.shadam.ftlmapper.query.annotations.MappedType;
+import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
  * @author sala

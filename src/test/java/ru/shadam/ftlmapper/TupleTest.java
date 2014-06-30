@@ -3,7 +3,7 @@ package ru.shadam.ftlmapper;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.shadam.ftlmapper.domain.Tuple2;
-import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.annotations.query.Query;
 
 import java.util.List;
 

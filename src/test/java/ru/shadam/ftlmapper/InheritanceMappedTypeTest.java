@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.shadam.ftlmapper.entity.ConstructorExtraLolInfo;
 import ru.shadam.ftlmapper.entity.ExtraLolInfo;
-import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.annotations.query.Query;
 
 import java.util.List;
 
