@@ -14,8 +14,6 @@ import java.util.Map;
 public class RowMapperFactory {
     private Map<Class<?>, RowMapper<?>> mapperMap;
 
-    private AnnotationRowMapperFactory annotationRowMapperFactory = new AnnotationRowMapperFactory();
-
     public RowMapperFactory() {
         mapperMap = new HashMap<>();
     }
@@ -48,7 +46,7 @@ public class RowMapperFactory {
         if(mapperMap.containsKey(clazz)) {
             return mapperMap.get(clazz);
         }
-        return annotationRowMapperFactory.annotationRowMapper("", clazz);
+        return AnnotationRowMapperFactory.getInstance("", clazz);
     }
 
     public <T> void register(Class<T> clazz, RowMapper<? extends T> mapper) {

@@ -19,8 +19,8 @@ import java.util.List;
 /**
  * @author sala
  */
-public class AnnotationRowMapperFactory {
-    public <T> AnnotationRowMapper<T> annotationRowMapper(String prefix, Class<T> clazz) {
+public abstract class AnnotationRowMapperFactory {
+    public static <T>  AnnotationRowMapper<T> getInstance(String prefix, Class<T> clazz) {
         NewInstanceSupplier<T> creator = getNewInstanceCreator(clazz);
         //
         final List<ResultSetConsumer<T>> consumers = new ArrayList<>();
@@ -32,7 +32,7 @@ public class AnnotationRowMapperFactory {
         return new AnnotationRowMapper<>(creator, consumers);
     }
 
-    private <T> List<Field> collectFields(Class<T> clazz) {
+    private static <T> List<Field> collectFields(Class<T> clazz) {
         final List<Field> fieldList = new ArrayList<>();
         for(Class<? super T> ancestor = clazz; ancestor != null; ancestor = ancestor.getSuperclass()) {
             if(ancestor.isAnnotationPresent(MappedType.class)) {
@@ -43,7 +43,7 @@ public class AnnotationRowMapperFactory {
         return fieldList;
     }
 
-    private <T> ResultSetConsumer<T> getResultSetConsumer(String prefix, Class<T> clazz, final Field field) {
+    private static <T> ResultSetConsumer<T> getResultSetConsumer(String prefix, Class<T> clazz, final Field field) {
         final Property property = field.getAnnotation(Property.class);
         final Embedded embedded = field.getAnnotation(Embedded.class);
         if((property == null && embedded == null) || (property != null && embedded != null)) {
@@ -71,7 +71,7 @@ public class AnnotationRowMapperFactory {
             if(!clazz.isAnnotationPresent(MappedType.class)) {
                 throw new IllegalStateException("Field mapped with @Embedded should be of class mapped with @MappedType");
             }
-            final AnnotationRowMapper rowMapper2 = annotationRowMapper(embeddedPrefix, embeddedClass);
+            final AnnotationRowMapper rowMapper2 = getInstance(embeddedPrefix, embeddedClass);
             resultSetConsumer = new ResultSetConsumer<T>() {
                 @Override
                 public void consume(T instance, ResultSetWrapper resultSetRow) throws SQLException {
@@ -86,7 +86,7 @@ public class AnnotationRowMapperFactory {
         return resultSetConsumer;
     }
 
-    private <T> NewInstanceSupplier<T> getNewInstanceCreator(Class<T> clazz) {
+    private static <T> NewInstanceSupplier<T> getNewInstanceCreator(Class<T> clazz) {
         NewInstanceSupplier<T> creator = null;
         final Constructor<?>[] constructors = clazz.getConstructors();
         for(final Constructor<?> constructor: constructors) {
@@ -110,7 +110,7 @@ public class AnnotationRowMapperFactory {
                         }
                         if(annotation instanceof Embedded) {
                             final String argPrefix = ((Embedded) annotation).value();
-                            rowMapper = annotationRowMapper(argPrefix, parameterClasses[paramIndex]);
+                            rowMapper = getInstance(argPrefix, parameterClasses[paramIndex]);
                         }
                     }
                     if(rowMapper == null) {
