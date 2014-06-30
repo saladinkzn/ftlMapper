@@ -10,8 +10,8 @@ import java.util.List;
  * @author sala
  */
 public class AnnotationRowMapper<T> implements RowMapper<T> {
-    private NewInstanceSupplier<T> newInstanceSupplier;
-    private List<ResultSetConsumer<T>> resultSetConsumers;
+    private final NewInstanceSupplier<T> newInstanceSupplier;
+    private final List<ResultSetConsumer<T>> resultSetConsumers;
 
     public AnnotationRowMapper(NewInstanceSupplier<T> newInstanceSupplier, List<ResultSetConsumer<T>> resultSetConsumers) {
         this.newInstanceSupplier = newInstanceSupplier;

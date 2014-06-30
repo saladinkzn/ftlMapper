@@ -2,6 +2,7 @@ package ru.shadam.ftlmapper.mapper;
 
 import ru.shadam.ftlmapper.annotations.query.MappedType;
 import ru.shadam.ftlmapper.mapper.annotation.AnnotationRowMapperFactory;
+import ru.shadam.ftlmapper.util.Function;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @author Timur Shakurov
  */
 public class RowMapperFactory {
-    private Map<Class<?>, RowMapper<?>> mapperMap;
+    private Map<Class<?>, Function<String, RowMapper>> mapperMap;
 
     public RowMapperFactory() {
         mapperMap = new HashMap<>();
@@ -32,6 +33,10 @@ public class RowMapperFactory {
     }
 
     public RowMapper<?> getRowMapper(Type type) {
+        return getRowMapper(type, "");
+    }
+
+    public RowMapper<?> getRowMapper(Type type, String nameOrPrefix) {
         final Class<?> clazz;
         final Type[] typeArguments;
         if(type instanceof Class<?>) {
@@ -44,12 +49,12 @@ public class RowMapperFactory {
             typeArguments = parameterizedType.getActualTypeArguments();
         }
         if(mapperMap.containsKey(clazz)) {
-            return mapperMap.get(clazz);
+            return mapperMap.get(clazz).get(nameOrPrefix);
         }
-        return AnnotationRowMapperFactory.getInstance("", clazz);
+        return AnnotationRowMapperFactory.getInstance(nameOrPrefix, clazz);
     }
 
-    public <T> void register(Class<T> clazz, RowMapper<? extends T> mapper) {
-        mapperMap.put(clazz, mapper);
+    public <T> void register(Class<T> clazz, Function<String, RowMapper<? extends T>> mapper) {
+        mapperMap.put(clazz, (Function)mapper);
     }
 }

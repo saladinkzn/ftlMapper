@@ -1,9 +1,8 @@
 package ru.shadam.ftlmapper;
 
 import org.junit.Assert;
-import org.junit.Test;
-import ru.shadam.ftlmapper.domain.Tuple2;
 import ru.shadam.ftlmapper.annotations.query.Query;
+import ru.shadam.ftlmapper.domain.Tuple2;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class TupleTest extends BaseTest {
         public List<Tuple2<Long, String>> getLols();
     }
 
-    @Test
+//    @Test
     public void test() {
         final Repository repository = repositoryFactory.getMapper(Repository.class);
         final List<Tuple2<Long, String>> lols = repository.getLols();

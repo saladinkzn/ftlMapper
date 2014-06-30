@@ -27,7 +27,10 @@ public abstract class AnnotationRowMapperFactory {
         //
         final List<Field> fieldList = collectFields(clazz);
         for(final Field field: fieldList) {
-            consumers.add(getResultSetConsumer(prefix, clazz, field));
+            final ResultSetConsumer<T> resultSetConsumer = AnnotationRowMapperFactory.getResultSetConsumer(prefix, field);
+            if(resultSetConsumer != null) {
+                consumers.add(resultSetConsumer);
+            }
         }
         return new AnnotationRowMapper<>(creator, consumers);
     }
@@ -43,11 +46,14 @@ public abstract class AnnotationRowMapperFactory {
         return fieldList;
     }
 
-    private static <T> ResultSetConsumer<T> getResultSetConsumer(String prefix, Class<T> clazz, final Field field) {
+    private static <T> ResultSetConsumer<T> getResultSetConsumer(String prefix, final Field field) {
         final Property property = field.getAnnotation(Property.class);
         final Embedded embedded = field.getAnnotation(Embedded.class);
-        if((property == null && embedded == null) || (property != null && embedded != null)) {
-            throw new IllegalArgumentException("Field cannot have nor Property or Embedded annotation neither both");
+        if(property == null && embedded == null) {
+            return null;
+        }
+        if(property != null && embedded != null) {
+            throw new IllegalArgumentException("Field " + field.getName() + " of class: " + field.getDeclaringClass().getCanonicalName() + " cannot have nor Property or Embedded annotation neither both");
         }
         final ResultSetConsumer<T> resultSetConsumer;
         if(property != null) {
@@ -68,7 +74,7 @@ public abstract class AnnotationRowMapperFactory {
             field.setAccessible(true);
             final String embeddedPrefix = prefix + embedded.value();
             final Class<?> embeddedClass = field.getType();
-            if(!clazz.isAnnotationPresent(MappedType.class)) {
+            if(!embeddedClass.isAnnotationPresent(MappedType.class)) {
                 throw new IllegalStateException("Field mapped with @Embedded should be of class mapped with @MappedType");
             }
             final AnnotationRowMapper rowMapper2 = getInstance(embeddedPrefix, embeddedClass);
@@ -149,7 +155,7 @@ public abstract class AnnotationRowMapperFactory {
                     }
                 };
             } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("If class has no consturctor mapped by @Creator");
+                throw new IllegalArgumentException("If class has no constructor mapped by @Creator. Class: " + clazz);
             }
         }
         return creator;

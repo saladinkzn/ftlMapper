@@ -13,8 +13,21 @@ public class SingleIntegerColumnRowMapper extends SingleColumnRowMapper<Integer>
         super(allowNull);
     }
 
+    public SingleIntegerColumnRowMapper(boolean allowNull, int columnIndex) {
+        super(allowNull, columnIndex);
+    }
+
+    public SingleIntegerColumnRowMapper(boolean allowNull, String columnName) {
+        super(allowNull, columnName);
+    }
+
     @Override
-    protected Integer getValue(ResultSetWrapper resultSet) throws SQLException {
+    protected Integer getValue(ResultSetWrapper resultSet, int columnIndex) throws SQLException {
         return resultSet.getInt(1);
+    }
+
+    @Override
+    protected Integer getValue(ResultSetWrapper resultSet, String columnName) throws SQLException {
+        return resultSet.getInt(columnName);
     }
 }
