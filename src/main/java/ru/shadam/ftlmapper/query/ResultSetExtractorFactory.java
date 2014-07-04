@@ -72,8 +72,10 @@ public class ResultSetExtractorFactory {
                         final RowMapper<?> keyMapper = rowMapperFactory.getRowMapper(classToMap, keyExtractor.value());
                         final RowMapper<?> valueMapper = rowMapperFactory.getRowMapper(actualTypeArguments[1]);
                         return new MapResultSetExtractor<>(keyMapper, valueMapper);
-                    } else {
+                    } else if (methodReturnType.equals(Set.class)) {
                         return new SetResultSetExtractor<>(rowMapperFactory.getRowMapper(classToMap));
+                    } else {
+                        throw new IllegalArgumentException("Unknown method return type");
                     }
                 } else {
                     throw new IllegalArgumentException("unexpected generic return type: " + genericReturnType);
