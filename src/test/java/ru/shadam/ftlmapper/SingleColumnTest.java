@@ -1,12 +1,8 @@
 package ru.shadam.ftlmapper;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shadam.ftlmapper.annotations.query.Query;
-import ru.shadam.ftlmapper.util.DataSourceAdapter;
-import ru.shadam.ftlmapper.util.QueryManager;
-import util.TestHelper;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -14,7 +10,7 @@ import java.util.Set;
 /**
  * @author sala
  */
-public class SingleColumnTest {
+public class SingleColumnTest extends BaseTest {
     public static interface LolRepository {
         @Query("select id, name from lol order by id asc")
         public Set<Long> getIds();
@@ -24,16 +20,6 @@ public class SingleColumnTest {
 
         @Query("select id from lol order by id asc")
         public Long[] getIdsArray();
-    }
-
-
-    private static RepositoryFactory repositoryFactory;
-
-    @BeforeClass
-    public static void init() throws Exception {
-        final QueryManager queryManager = new QueryManager();
-        final DataSourceAdapter dataSourceAdapter = TestHelper.getDataSourceAdapter();
-        repositoryFactory = new RepositoryFactory(queryManager, dataSourceAdapter);
     }
 
     @Test

@@ -15,22 +15,13 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
-public class ParameterTest {
-    private static RepositoryFactory repositoryFactory;
-
+public class ParameterTest extends BaseTest {
     public static interface LolRepository {
         @Query("select id from lol where name = ?1")
         public long getIdByName(@Param("name") String name);
 
         @Query("select id, name from lol where id = ?1 and name = ?2")
         public List<CreatorLolInfo> getOne(@Param("id") long id, @Param("name") String name);
-    }
-
-    @BeforeClass
-    public static void init() throws Exception {
-        final QueryManager queryManager = new QueryManager();
-        final DataSourceAdapter dataSourceAdapter = TestHelper.getDataSourceAdapter();
-        repositoryFactory = new RepositoryFactory(queryManager, dataSourceAdapter);
     }
 
     @Test
