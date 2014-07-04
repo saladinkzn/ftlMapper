@@ -1,6 +1,7 @@
 package ru.shadam.ftlmapper.mapper;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
@@ -85,5 +86,13 @@ public final class ResultSetWrapper {
 
     public double getDouble(int columnIndex) throws SQLException {
         return resultSet.getDouble(columnIndex);
+    }
+
+    public Object getObject(int columnIndex) throws SQLException {
+        return resultSet.getObject(columnIndex);
+    }
+
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return resultSet.getMetaData();
     }
 }

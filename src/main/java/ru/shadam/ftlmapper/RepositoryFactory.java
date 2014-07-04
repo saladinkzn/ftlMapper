@@ -2,6 +2,7 @@ package ru.shadam.ftlmapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
 import ru.shadam.ftlmapper.mapper.RowMapperFactory;
 import ru.shadam.ftlmapper.mapper.single.SingleByteColumnRowMapper;
@@ -15,6 +16,8 @@ import ru.shadam.ftlmapper.util.Function;
 import ru.shadam.ftlmapper.util.QueryManager;
 
 import java.lang.reflect.Proxy;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 /**
  * Actually, this is a proxy factory for "Repositories"
@@ -108,6 +111,24 @@ public class RepositoryFactory {
                     return singleStringColumnRowMapper;
                 }
                 return new SingleStringColumnRowMapper(param);
+            }
+        });
+        final RowMapper<Object[]> objectArrayRowMapper = new RowMapper<Object[]>() {
+            @Override
+            public Object[] mapRow(ResultSetWrapper resultSet) throws SQLException {
+                final ResultSetMetaData metaData = resultSet.getMetaData();
+                final int columnCount = metaData.getColumnCount();
+                Object[] result = new Object[columnCount];
+                for(int i = 1; i <= columnCount; i++) {
+                    result[i-1] = resultSet.getObject(i);
+                }
+                return result;
+            }
+        };
+        rowMapperFactory.register(Object[].class, new Function<String, RowMapper<? extends Object[]>>() {
+            @Override
+            public RowMapper<? extends Object[]> get(String param) {
+                return objectArrayRowMapper;
             }
         });
         //

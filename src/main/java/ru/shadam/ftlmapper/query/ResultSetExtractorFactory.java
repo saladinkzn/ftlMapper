@@ -78,6 +78,8 @@ public class ResultSetExtractorFactory {
                 } else {
                     throw new IllegalArgumentException("unexpected generic return type: " + genericReturnType);
                 }
+            } else if(methodReturnType.isAssignableFrom(Object[].class)) {
+                return new UniqueResultExtractor<>(rowMapperFactory.getRowMapper(methodReturnType));
             } else if(methodReturnType.isArray()) {
                 classToMap = methodReturnType.getComponentType();
                 return new ArrayResultSetExtractor(rowMapperFactory.getRowMapper(classToMap), ((Class<?>) classToMap));
