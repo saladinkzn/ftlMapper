@@ -1,4 +1,4 @@
-package ru.shadam.ftlmapper.mapper.annotations;
+package ru.shadam.ftlmapper.annotations.query;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,13 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author Timur Shakurov
+ * @author sala
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.FIELD, ElementType.PARAMETER})
-public @interface Property {
+@Target({ElementType.METHOD})
+public @interface KeyExtractor {
     /**
-     * SQL column name
+     * Column name or MappedType prefix
+     * @return
      */
-    String value() default "";
+    String value();
 }

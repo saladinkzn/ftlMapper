@@ -1,39 +1,35 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.mapper.annotations.Creator;
-import ru.shadam.ftlmapper.mapper.annotations.Embedded;
-import ru.shadam.ftlmapper.mapper.annotations.Property;
-import ru.shadam.ftlmapper.query.annotations.MappedType;
+import ru.shadam.ftlmapper.annotations.mapper.Creator;
+import ru.shadam.ftlmapper.annotations.mapper.Embedded;
+import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
- * @author Timur Shakurov
+ * @author sala
  */
 @MappedType
 public class CreatorComplexLolInfo {
-    private final long id;
-
-    private final CreatorLolInfo embedded;
+    private long id;
+    private String name;
+    private ExtraInfo extraInfo;
 
     @Creator
-    public CreatorComplexLolInfo(@Property("id") long id, @Embedded("ch_") CreatorLolInfo embedded) {
+    public CreatorComplexLolInfo(@Property("id") long id, @Property("name") String name, @Embedded("extra_") ExtraInfo extraInfo) {
         this.id = id;
-        this.embedded = embedded;
+        this.name = name;
+        this.extraInfo = extraInfo;
     }
 
     public long getId() {
         return id;
     }
 
-    public CreatorLolInfo getEmbedded() {
-        return embedded;
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CreatorComplexLolInfo{");
-        sb.append("id=").append(id);
-        sb.append(", embedded=").append(embedded);
-        sb.append('}');
-        return sb.toString();
+    public ExtraInfo getExtraInfo() {
+        return extraInfo;
     }
 }

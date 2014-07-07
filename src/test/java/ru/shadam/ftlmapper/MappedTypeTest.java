@@ -5,7 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shadam.ftlmapper.entity.CreatorLolInfo;
 import ru.shadam.ftlmapper.entity.PropertyLolInfo;
-import ru.shadam.ftlmapper.query.annotations.Query;
+import ru.shadam.ftlmapper.annotations.query.Query;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 import util.TestHelper;

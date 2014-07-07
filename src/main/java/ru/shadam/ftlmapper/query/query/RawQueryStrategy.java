@@ -1,8 +1,11 @@
 package ru.shadam.ftlmapper.query.query;
 
 import ru.shadam.ftlmapper.query.QueryStrategy;
+import ru.shadam.ftlmapper.util.PreparedStatementCreator;
 
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * @author Timur Shakurov
@@ -15,23 +18,19 @@ public class RawQueryStrategy implements QueryStrategy {
     }
 
     @Override
-    public String getSql(Map<String, Object> args) {
-        String sql = template;
-        // TODO: named parameters support
-        int i = 1;
-        if(args != null && !args.isEmpty()) {
-            for(Map.Entry<String, Object> argEntry: args.entrySet()) {
-                final Object value = argEntry.getValue();
-                final String strValue;
-                if(value instanceof String) {
-                    strValue = "'" + value + "'";
-                } else {
-                    strValue = String.valueOf(value);
+    public PreparedStatementCreator getSql(final Object[] args) {
+        return new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement prepareStatement(Connection statement) throws SQLException {
+                final PreparedStatement preparedStatement = statement.prepareStatement(template);
+                if(args != null) {
+                    for (int i = 0; i < args.length; i++) {
+                        final int index = i + 1;
+                        preparedStatement.setObject(index, args[i]);
+                    }
                 }
-                sql = sql.replace("?" + i, strValue);
-                i++;
+                return preparedStatement;
             }
-        }
-        return sql;
+        };
     }
 }

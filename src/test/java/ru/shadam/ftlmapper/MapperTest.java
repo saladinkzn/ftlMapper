@@ -4,15 +4,15 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.shadam.ftlmapper.entity.SimpleLolInfo;
+import ru.shadam.ftlmapper.mapper.ResultSetWrapper;
 import ru.shadam.ftlmapper.mapper.RowMapper;
-import ru.shadam.ftlmapper.query.annotations.Mapper;
-import ru.shadam.ftlmapper.query.annotations.Param;
-import ru.shadam.ftlmapper.query.annotations.Template;
+import ru.shadam.ftlmapper.annotations.query.Mapper;
+import ru.shadam.ftlmapper.annotations.query.Param;
+import ru.shadam.ftlmapper.annotations.query.Template;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
 import util.TestHelper;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class MapperTest {
     public static class LolInfoMapper implements RowMapper<SimpleLolInfo> {
 
         @Override
-        public SimpleLolInfo mapRow(ResultSet resultSet) throws SQLException {
+        public SimpleLolInfo mapRow(ResultSetWrapper resultSet) throws SQLException {
             return new SimpleLolInfo(resultSet.getLong(1), resultSet.getString(2));
         }
     }

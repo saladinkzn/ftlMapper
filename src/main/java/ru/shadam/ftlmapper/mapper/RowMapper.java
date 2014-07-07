@@ -1,6 +1,5 @@
 package ru.shadam.ftlmapper.mapper;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -9,5 +8,5 @@ import java.sql.SQLException;
  * @author Timur Shakurov
  */
 public interface RowMapper<T> {
-    public T mapRow(ResultSet resultSet) throws SQLException;
+    public T mapRow(ResultSetWrapper resultSet) throws SQLException;
 }
