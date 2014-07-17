@@ -1,7 +1,7 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.annotations.mapper.Creator;
-import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.annotations.Column;
+import ru.shadam.annotations.Creator;
 import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
@@ -16,7 +16,7 @@ public class ConstructorExtraLolInfo extends CreatorLolInfo {
     }
 
     @Creator
-    public ConstructorExtraLolInfo(@Property("id") long id, @Property("name") String name, @Property("extraInfo") String extraInfo) {
+    public ConstructorExtraLolInfo(@Column("id") long id, @Column("name") String name, @Column("extraInfo") String extraInfo) {
         super(id, name);
         this.extraInfo = extraInfo;
     }

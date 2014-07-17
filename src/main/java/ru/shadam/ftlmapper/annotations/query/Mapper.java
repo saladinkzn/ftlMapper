@@ -1,6 +1,6 @@
 package ru.shadam.ftlmapper.annotations.query;
 
-import ru.shadam.ftlmapper.mapper.RowMapper;
+import ru.shadam.extractor.ResultSetExtractor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Mapper {
-    Class<? extends RowMapper<?>> value();
+    Class<? extends ResultSetExtractor<?>> value();
 }

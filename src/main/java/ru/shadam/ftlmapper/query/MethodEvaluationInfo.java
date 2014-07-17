@@ -1,5 +1,8 @@
 package ru.shadam.ftlmapper.query;
 
+import ru.shadam.ast.ASTParser;
+import ru.shadam.extractor.ResultSetExtractor;
+import ru.shadam.extractor.ResultSetExtractorFactory;
 import ru.shadam.ftlmapper.annotations.query.Param;
 import ru.shadam.ftlmapper.annotations.query.Query;
 import ru.shadam.ftlmapper.annotations.query.Template;
@@ -20,7 +23,7 @@ public class MethodEvaluationInfo {
     private final QueryStrategy queryStrategy;
     //
 
-    public MethodEvaluationInfo(QueryManager queryManager, Method method, ResultSetExtractorFactory resultSetExtractorFactory) {
+    public MethodEvaluationInfo(QueryManager queryManager, Method method, ResultSetExtractorFactory resultSetExtractorFactory, ASTParser astParser) {
 
         final Template template = method.getAnnotation(Template.class);
         if(template != null) {
@@ -44,14 +47,14 @@ public class MethodEvaluationInfo {
             }
         }
         //
-        resultSetExtractor = resultSetExtractorFactory.getResultSetExtractor(method);
+        resultSetExtractor = resultSetExtractorFactory.generate(astParser.parse("", "", method.getGenericReturnType()));
     }
 
     public QueryStrategy getQueryStrategy() {
         return queryStrategy;
     }
 
-    public ResultSetExtractor getResultSetExtractor() {
+    public ResultSetExtractor<?> getResultSetExtractor() {
         return resultSetExtractor;
     }
 }

@@ -1,8 +1,7 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.annotations.mapper.Creator;
-import ru.shadam.ftlmapper.annotations.mapper.Embedded;
-import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.annotations.Column;
+import ru.shadam.annotations.Creator;
 import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
@@ -15,7 +14,7 @@ public class CreatorComplexLolInfo {
     private ExtraInfo extraInfo;
 
     @Creator
-    public CreatorComplexLolInfo(@Property("id") long id, @Property("name") String name, @Embedded("extra_") ExtraInfo extraInfo) {
+    public CreatorComplexLolInfo(@Column("id") long id, @Column("name") String name, @Column("extra") ExtraInfo extraInfo) {
         this.id = id;
         this.name = name;
         this.extraInfo = extraInfo;

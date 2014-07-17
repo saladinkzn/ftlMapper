@@ -1,6 +1,6 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.annotations.Column;
 import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
@@ -8,7 +8,7 @@ import ru.shadam.ftlmapper.annotations.query.MappedType;
  */
 @MappedType
 public class ExtraInfo {
-    @Property("extraInfo")
+    @Column("extraInfo")
     private String extraField;
 
     public String getExtraField() {

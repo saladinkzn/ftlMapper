@@ -1,6 +1,7 @@
 package ru.shadam.ftlmapper.util;
 
-import ru.shadam.ftlmapper.query.ResultSetExtractor;
+
+import ru.shadam.extractor.ResultSetExtractor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

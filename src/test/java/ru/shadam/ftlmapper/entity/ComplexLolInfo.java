@@ -1,7 +1,6 @@
 package ru.shadam.ftlmapper.entity;
 
-import ru.shadam.ftlmapper.annotations.mapper.Embedded;
-import ru.shadam.ftlmapper.annotations.mapper.Property;
+import ru.shadam.annotations.Column;
 import ru.shadam.ftlmapper.annotations.query.MappedType;
 
 /**
@@ -9,10 +8,10 @@ import ru.shadam.ftlmapper.annotations.query.MappedType;
  */
 @MappedType
 public class ComplexLolInfo {
-    @Property("id")
+    @Column("id")
     private long id;
 
-    @Embedded("ch_")
+    @Column("ch")
     private CreatorLolInfo embedded;
 
     public long getId() {
