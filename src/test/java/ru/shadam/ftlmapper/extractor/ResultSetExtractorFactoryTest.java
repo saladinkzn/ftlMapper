@@ -12,6 +12,7 @@ import ru.shadam.ftlmapper.ast.domain.ASTList;
 import ru.shadam.ftlmapper.ast.domain.ASTObject;
 import ru.shadam.ftlmapper.ast.domain.ASTPrimitive;
 import ru.shadam.ftlmapper.extractor.inner.InnerResultSetExtractor;
+import ru.shadam.ftlmapper.extractor.inner.list.CollectionResultSetExtractor;
 import ru.shadam.ftlmapper.extractor.inner.object.ConstructorInstanceProvider;
 import ru.shadam.ftlmapper.extractor.inner.object.InstanceProvider;
 import ru.shadam.ftlmapper.extractor.inner.object.ObjectResultSetExtractor;
@@ -186,7 +187,7 @@ public class ResultSetExtractorFactoryTest {
             {
                 final ListResultSetExtractor listResultSetExtractor = (ListResultSetExtractor) attributeExtractors.get("slaves");
                 //
-                final InnerResultSetExtractor innerResultSetExtractor2 = ReflectionUtil.getFieldValue(listResultSetExtractor, "innerResultSetExtractor", ListResultSetExtractor.class);
+                final InnerResultSetExtractor innerResultSetExtractor2 = ReflectionUtil.getFieldValue(listResultSetExtractor, "innerResultSetExtractor", CollectionResultSetExtractor.class);
                 //
                 {
                     assertTrue(innerResultSetExtractor2 instanceof ObjectResultSetExtractor);
@@ -219,7 +220,7 @@ public class ResultSetExtractorFactoryTest {
                     }
                 }
                 //
-                final ResultSetPredicate resultSetPredicate = ReflectionUtil.getFieldValue(listResultSetExtractor, "listCompletePredicate", ListResultSetExtractor.class);
+                final ResultSetPredicate resultSetPredicate = ReflectionUtil.getFieldValue(listResultSetExtractor, "listCompletePredicate", CollectionResultSetExtractor.class);
                 assertTrue(resultSetPredicate instanceof CheckAttributesPredicate);
                 final CheckAttributesPredicate checkAttributesPredicate = ((CheckAttributesPredicate) resultSetPredicate);
                 final List<InnerResultSetExtractor> parentAttributeExtractors = ReflectionUtil.getFieldValue(checkAttributesPredicate, "extractors", CheckAttributesPredicate.class);
@@ -257,7 +258,7 @@ public class ResultSetExtractorFactoryTest {
         final ListResultSetExtractor innerResultSetListResultSetExtractor = ((ListResultSetExtractor) innerResultSetExtractor);
         //
         {
-            final InnerResultSetExtractor listInnerResultSetExtract = ReflectionUtil.getFieldValue(innerResultSetListResultSetExtractor, "innerResultSetExtractor", ListResultSetExtractor.class);
+            final InnerResultSetExtractor listInnerResultSetExtract = ReflectionUtil.getFieldValue(innerResultSetListResultSetExtractor, "innerResultSetExtractor", CollectionResultSetExtractor.class);
             assertTrue(listInnerResultSetExtract instanceof LongColumnIndexResultSetExtractor);
             //
             final LongColumnIndexResultSetExtractor listInnerResultSetExtractor2 = ((LongColumnIndexResultSetExtractor) listInnerResultSetExtract);

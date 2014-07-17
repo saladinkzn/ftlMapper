@@ -2,32 +2,31 @@ package ru.shadam.ftlmapper.extractor.state;
 
 import ru.shadam.ftlmapper.extractor.inner.list.predicates.PredicateState;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  *
  */
-public class ListState<T> extends SimpleState<List<T>> {
-    private final List<T> tempValue;
+public class CollectionState<T, U extends Collection<T>> extends SimpleState<U> {
+    private final U tempValue;
     private final SimpleState<T> childState;
-    //
     private final PredicateState predicateState;
 
-    public ListState(List<T> tempValue, SimpleState<T> childState, PredicateState predicateState) {
+    public CollectionState(U tempValue, SimpleState<T> childState, PredicateState predicateState) {
         super();
         this.tempValue = tempValue;
         this.childState = childState;
         this.predicateState = predicateState;
     }
 
-    public ListState(boolean completed, List<T> value, List<T> tempValue, SimpleState<T> childState, PredicateState predicateState) {
+    public CollectionState(boolean completed, U value, U tempValue, SimpleState<T> childState, PredicateState predicateState) {
         super(completed, value);
         this.tempValue = tempValue;
         this.childState = childState;
         this.predicateState = predicateState;
     }
 
-    public List<T> getTempValue() {
+    public U getTempValue() {
         return tempValue;
     }
 
@@ -37,15 +36,5 @@ public class ListState<T> extends SimpleState<List<T>> {
 
     public PredicateState getPredicateState() {
         return predicateState;
-    }
-
-    @Override
-    public String toString() {
-        return "ListState{" +
-                "completed="+ isCompleted() +
-                ", value=" + getValue() +
-                ", tempValue=" + tempValue +
-                ", childState=" + childState +
-                '}';
     }
 }
