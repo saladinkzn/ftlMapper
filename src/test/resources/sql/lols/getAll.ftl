@@ -1,3 +1,3 @@
 select id, name
-from lol
+from master
 limit ${lolcount}

@@ -1,2 +1,2 @@
 select id, name
-from LOL
+from master

@@ -11,11 +11,11 @@ import java.util.List;
  */
 public class ObjectArrayTest extends BaseTest {
     static interface Repository {
-        @Query("select id, name from lol limit 1")
+        @Query("select id, name from master limit 1")
         Object[] getFirst();
     }
     static interface Repository2 {
-        @Query("select id, name from lol")
+        @Query("select id, name from master")
         List<Object[]> getAll();
     }
 

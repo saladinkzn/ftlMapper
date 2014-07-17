@@ -1,10 +1,10 @@
 package ru.shadam.ftlmapper;
 
+import entity.creator.Master;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.shadam.ftlmapper.annotations.query.KeyExtractor;
 import ru.shadam.ftlmapper.annotations.query.Query;
-import ru.shadam.ftlmapper.entity.CreatorLolInfo;
 
 import java.util.Map;
 
@@ -13,30 +13,30 @@ import java.util.Map;
  */
 public class MapTest extends BaseTest {
     private static interface SimpleMapRepository {
-        @Query("select id, name from lol")
+        @Query("select id, name from master")
         @KeyExtractor("id")
-        public Map<Long, CreatorLolInfo> getLolMap();
+        public Map<Long, Master> getLolMap();
     }
 
     private static interface SimpleMapRepository2 {
-        @Query("select name, id from lol")
+        @Query("select name, id from master")
         @KeyExtractor("id")
-        public Map<Long, CreatorLolInfo> getLolMap();
+        public Map<Long, Master> getLolMap();
     }
 
     @Test
     public void test() {
         final SimpleMapRepository simpleMapRepository = repositoryFactory.getMapper(SimpleMapRepository.class);
-        final Map<Long, CreatorLolInfo> result = simpleMapRepository.getLolMap();
+        final Map<Long, Master> result = simpleMapRepository.getLolMap();
         Assert.assertEquals(2L, result.size());
         Assert.assertNotNull(result.get(1L));
         {
-            final CreatorLolInfo first = result.get(1L);
+            final Master first = result.get(1L);
             Assert.assertEquals(1L, first.getId());
             Assert.assertEquals("abc", first.getName());
         }
         {
-            final CreatorLolInfo second = result.get(2L);
+            final Master second = result.get(2L);
             Assert.assertEquals(2L, second.getId());
             Assert.assertEquals("def", second.getName());
         }
@@ -45,16 +45,16 @@ public class MapTest extends BaseTest {
     @Test
     public void test2() {
         final SimpleMapRepository2 simpleMapRepository = repositoryFactory.getMapper(SimpleMapRepository2.class);
-        final Map<Long, CreatorLolInfo> result = simpleMapRepository.getLolMap();
+        final Map<Long, Master> result = simpleMapRepository.getLolMap();
         Assert.assertEquals(2L, result.size());
         Assert.assertNotNull(result.get(1L));
         {
-            final CreatorLolInfo first = result.get(1L);
+            final Master first = result.get(1L);
             Assert.assertEquals(1L, first.getId());
             Assert.assertEquals("abc", first.getName());
         }
         {
-            final CreatorLolInfo second = result.get(2L);
+            final Master second = result.get(2L);
             Assert.assertEquals(2L, second.getId());
             Assert.assertEquals("def", second.getName());
         }

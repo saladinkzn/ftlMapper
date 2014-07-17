@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class TupleTest extends BaseTest {
     private static interface Repository {
-        @Query("select id, name from lol")
+        @Query("select id, name from master")
         public List<Tuple2<Long, String>> getLols();
     }
 

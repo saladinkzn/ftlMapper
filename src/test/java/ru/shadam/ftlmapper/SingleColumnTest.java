@@ -12,13 +12,13 @@ import java.util.List;
  */
 public class SingleColumnTest extends BaseTest {
     public static interface LolRepository {
-        @Query("select id, name from lol order by id asc")
+        @Query("select id, name from master order by id asc")
         public List<Long> getIds();
 
-        @Query("select name from lol order by id asc")
+        @Query("select name from master order by id asc")
         public List<String> getNames();
 
-        @Query("select id from lol order by id asc")
+        @Query("select id from master order by id asc")
         public Long[] getIdsArray();
     }
 

@@ -1,16 +1,12 @@
 package ru.shadam.ftlmapper;
 
+import entity.creator.Master;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
-import ru.shadam.ftlmapper.entity.SimpleLolInfo;
 import ru.shadam.ftlmapper.annotations.query.Mapper;
 import ru.shadam.ftlmapper.annotations.query.Param;
 import ru.shadam.ftlmapper.annotations.query.Template;
-import ru.shadam.ftlmapper.util.DataSourceAdapter;
-import ru.shadam.ftlmapper.util.QueryManager;
-import util.TestHelper;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,36 +16,27 @@ import java.util.List;
 /**
  * @author Timur Shakurov
  */
-public class MapperTest {
-    private static RepositoryFactory repositoryFactory;
+public class MapperTest extends BaseTest {
 
     public interface LolRepository {
         @Template("sql/lols/getAll.ftl")
         @Mapper(LolInfoListMapper.class)
-        public List<SimpleLolInfo> getLols(@Param("lolcount") long count);
+        public List<Master> getLols(@Param("lolcount") long count);
 
         @Template("sql/lols/getOne.ftl")
         @Mapper(LolInfoMapper.class)
-        public SimpleLolInfo getLolInfo(@Param("id") long id);
-    }
-
-
-    @BeforeClass
-    public static void init() throws Exception {
-        final QueryManager queryManager = new QueryManager();
-        final DataSourceAdapter dataSourceAdapter = TestHelper.getDataSourceAdapter();
-        repositoryFactory = new RepositoryFactory(queryManager, dataSourceAdapter);
+        public Master getLolInfo(@Param("id") long id);
     }
 
     @Test
     public void test() {
         final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
-        final List<SimpleLolInfo> lols = lolRepository.getLols(1);
+        final List<Master> lols = lolRepository.getLols(1);
         Assert.assertEquals(1, lols.size());
         Assert.assertEquals(1, lols.get(0).getId());
         Assert.assertEquals("abc", lols.get(0).getName());
         //
-        final SimpleLolInfo lolInfo = lolRepository.getLolInfo(2L);
+        final Master lolInfo = lolRepository.getLolInfo(2L);
         Assert.assertNotNull(lolInfo);
         Assert.assertEquals(2L, lolInfo.getId());
         Assert.assertEquals("def", lolInfo.getName());
@@ -58,12 +45,12 @@ public class MapperTest {
     /**
      * simple mapper
      */
-    public static class LolInfoMapper implements ResultSetExtractor<SimpleLolInfo> {
+    public static class LolInfoMapper implements ResultSetExtractor<Master> {
 
         @Override
-        public SimpleLolInfo extractResult(ResultSet resultSet) throws SQLException {
+        public Master extractResult(ResultSet resultSet) throws SQLException {
             if(resultSet.next()) {
-                return new SimpleLolInfo(resultSet.getLong(1), resultSet.getString(2));
+                return new Master(resultSet.getLong(1), resultSet.getString(2));
             } else {
                 return null;
             }
@@ -73,13 +60,13 @@ public class MapperTest {
     /**
      * list mapper
      */
-    public static class LolInfoListMapper implements ResultSetExtractor<List<SimpleLolInfo>> {
+    public static class LolInfoListMapper implements ResultSetExtractor<List<Master>> {
 
         @Override
-        public List<SimpleLolInfo> extractResult(ResultSet resultSet) throws SQLException {
-            final List<SimpleLolInfo> result = new ArrayList<>();
+        public List<Master> extractResult(ResultSet resultSet) throws SQLException {
+            final List<Master> result = new ArrayList<>();
             while (resultSet.next()) {
-                result.add(new SimpleLolInfo(resultSet.getLong(1), resultSet.getString(2)));
+                result.add(new Master(resultSet.getLong(1), resultSet.getString(2)));
             }
             return result;
         }
