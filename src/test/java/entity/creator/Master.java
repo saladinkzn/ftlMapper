@@ -1,7 +1,7 @@
 package entity.creator;
 
-import ru.shadam.annotations.Column;
-import ru.shadam.annotations.Creator;
+import ru.shadam.ftlmapper.annotations.Column;
+import ru.shadam.ftlmapper.annotations.Creator;
 
 /**
  *

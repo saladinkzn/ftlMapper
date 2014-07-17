@@ -2,11 +2,11 @@ package ru.shadam.ftlmapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.shadam.ast.ASTParser;
+import ru.shadam.ftlmapper.ast.ASTParser;
 import ru.shadam.ftlmapper.query.QueryInvocationHandler;
 import ru.shadam.ftlmapper.util.DataSourceAdapter;
 import ru.shadam.ftlmapper.util.QueryManager;
-import ru.shadam.extractor.ResultSetExtractorFactory;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractorFactory;
 
 import java.lang.reflect.Proxy;
 

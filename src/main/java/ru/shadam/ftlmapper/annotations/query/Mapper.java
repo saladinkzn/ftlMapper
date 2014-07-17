@@ -1,6 +1,6 @@
 package ru.shadam.ftlmapper.annotations.query;
 
-import ru.shadam.extractor.ResultSetExtractor;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

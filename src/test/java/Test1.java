@@ -1,4 +1,4 @@
-import ru.shadam.ast.ASTParser;
+import ru.shadam.ftlmapper.ast.ASTParser;
 import org.junit.Test;
 
 import java.lang.reflect.Type;

@@ -1,7 +1,7 @@
 package util;
 
-import ru.shadam.annotations.Column;
-import ru.shadam.annotations.Creator;
+import ru.shadam.ftlmapper.annotations.Column;
+import ru.shadam.ftlmapper.annotations.Creator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -86,9 +86,9 @@ public abstract class ReflectionUtil {
     }
 
     public static Method getSetter(Class<?> clazz, String propertyName) {
-        List<Method> setters = ru.shadam.util.ReflectionUtil.getSetters(clazz);
+        List<Method> setters = ru.shadam.ftlmapper.util.ReflectionUtil.getSetters(clazz);
         for(Method setter: setters) {
-            if(propertyName.equals(ru.shadam.util.ReflectionUtil.getPropertyName(setter))) {
+            if(propertyName.equals(ru.shadam.ftlmapper.util.ReflectionUtil.getPropertyName(setter))) {
                 return setter;
             }
         }

@@ -1,6 +1,6 @@
 package entity.property;
 
-import ru.shadam.annotations.Column;
+import ru.shadam.ftlmapper.annotations.Column;
 
 /**
  * @author sala

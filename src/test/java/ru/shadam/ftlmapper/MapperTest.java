@@ -3,7 +3,7 @@ package ru.shadam.ftlmapper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.shadam.extractor.ResultSetExtractor;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
 import ru.shadam.ftlmapper.entity.SimpleLolInfo;
 import ru.shadam.ftlmapper.annotations.query.Mapper;
 import ru.shadam.ftlmapper.annotations.query.Param;

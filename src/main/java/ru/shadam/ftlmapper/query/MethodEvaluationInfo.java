@@ -1,8 +1,8 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ast.ASTParser;
-import ru.shadam.extractor.ResultSetExtractor;
-import ru.shadam.extractor.ResultSetExtractorFactory;
+import ru.shadam.ftlmapper.ast.ASTParser;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractorFactory;
 import ru.shadam.ftlmapper.annotations.query.Param;
 import ru.shadam.ftlmapper.annotations.query.Query;
 import ru.shadam.ftlmapper.annotations.query.Template;
