@@ -1,11 +1,12 @@
 package ru.shadam.ftlmapper.query;
 
-import ru.shadam.ftlmapper.ast.ASTParser;
-import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
-import ru.shadam.ftlmapper.extractor.ResultSetExtractorFactory;
+import ru.shadam.ftlmapper.annotations.query.Mapper;
 import ru.shadam.ftlmapper.annotations.query.Param;
 import ru.shadam.ftlmapper.annotations.query.Query;
 import ru.shadam.ftlmapper.annotations.query.Template;
+import ru.shadam.ftlmapper.ast.ASTParser;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
+import ru.shadam.ftlmapper.extractor.ResultSetExtractorFactory;
 import ru.shadam.ftlmapper.query.query.RawQueryStrategy;
 import ru.shadam.ftlmapper.query.query.TemplateQueryStrategy;
 import ru.shadam.ftlmapper.util.QueryManager;
@@ -47,7 +48,16 @@ public class MethodEvaluationInfo {
             }
         }
         //
-        resultSetExtractor = resultSetExtractorFactory.generate(astParser.parse("", "", method.getGenericReturnType()));
+        if(method.isAnnotationPresent(Mapper.class)) {
+            final Mapper mapper = method.getAnnotation(Mapper.class);
+            try {
+                resultSetExtractor = mapper.value().newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new IllegalArgumentException("Cannot instantiate mapper");
+            }
+        } else {
+            resultSetExtractor = resultSetExtractorFactory.generate(astParser.parse("", "", method.getGenericReturnType()));
+        }
     }
 
     public QueryStrategy getQueryStrategy() {

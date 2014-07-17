@@ -14,6 +14,7 @@ import util.TestHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class MapperTest {
 
     public interface LolRepository {
         @Template("sql/lols/getAll.ftl")
-        @Mapper(LolInfoMapper.class)
+        @Mapper(LolInfoListMapper.class)
         public List<SimpleLolInfo> getLols(@Param("lolcount") long count);
 
         @Template("sql/lols/getOne.ftl")
@@ -66,6 +67,21 @@ public class MapperTest {
             } else {
                 return null;
             }
+        }
+    }
+
+    /**
+     * list mapper
+     */
+    public static class LolInfoListMapper implements ResultSetExtractor<List<SimpleLolInfo>> {
+
+        @Override
+        public List<SimpleLolInfo> extractResult(ResultSet resultSet) throws SQLException {
+            final List<SimpleLolInfo> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(new SimpleLolInfo(resultSet.getLong(1), resultSet.getString(2)));
+            }
+            return result;
         }
     }
 }
