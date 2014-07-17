@@ -19,6 +19,7 @@ public class ResultSetExtractorFactory implements RecursionProvider {
         generatorModules.add(new PrimitiveGeneratorModule());
         generatorModules.add(new ListGeneratorModule());
         generatorModules.add(new SetGeneratorModule());
+        generatorModules.add(new ArrayGeneratorModule());
         generatorModules.add(new ObjectGeneratorModule());
     }
 

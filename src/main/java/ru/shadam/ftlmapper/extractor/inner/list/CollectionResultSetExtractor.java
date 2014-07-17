@@ -3,17 +3,16 @@ package ru.shadam.ftlmapper.extractor.inner.list;
 import ru.shadam.ftlmapper.extractor.inner.InnerResultSetExtractor;
 import ru.shadam.ftlmapper.extractor.inner.list.predicates.PredicateState;
 import ru.shadam.ftlmapper.extractor.inner.list.predicates.ResultSetPredicate;
-import ru.shadam.ftlmapper.extractor.state.CollectionState;
+import ru.shadam.ftlmapper.extractor.state.ChildPredicateState;
 import ru.shadam.ftlmapper.extractor.state.SimpleState;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 /**
  *
  */
-public abstract class CollectionResultSetExtractor<T, U extends Collection<T>> implements InnerResultSetExtractor<CollectionState<T, U>> {
+public abstract class CollectionResultSetExtractor<T, U, V extends ChildPredicateState<T, U>> implements InnerResultSetExtractor<V> {
     private final InnerResultSetExtractor<SimpleState<T>> innerResultSetExtractor;
     private final ResultSetPredicate<PredicateState> listCompletePredicate;
     //
@@ -26,16 +25,16 @@ public abstract class CollectionResultSetExtractor<T, U extends Collection<T>> i
     }
 
     @Override
-    public CollectionState<T, U> getNewState(CollectionState<T, U> oldState) {
+    public V getNewState(V oldState) {
         if(oldState == null) {
-            return new CollectionState<>(newValue(), innerResultSetExtractor.getNewState(null), null);
+            return newState(newValue(), innerResultSetExtractor.getNewState(null), null);
         } else {
-            return new CollectionState<>(oldState.getTempValue(), innerResultSetExtractor.getNewState(oldState.getChildState()), null);
+            return newState(oldState.getTempValue(), innerResultSetExtractor.getNewState(oldState.getChildState()), null);
         }
     }
 
     @Override
-    public CollectionState<T, U> consumeRow(CollectionState<T, U> listState, ResultSet resultSet) throws SQLException {
+    public V consumeRow(V listState, ResultSet resultSet) throws SQLException {
         final SimpleState<T> childState;
         if(listState.getChildState().isCompleted()) {
             childState = innerResultSetExtractor.getNewState(listState.getChildState());
@@ -67,30 +66,43 @@ public abstract class CollectionResultSetExtractor<T, U extends Collection<T>> i
             newPredicateState = predicateState;
         }
         //
+        final U newTempValue;
         if(newestChildState.isCompleted()) {
-            tempValue.add(newestChildState.getValue());
+            final T childValue = newestChildState.getValue();
+            newTempValue = addNewValue(tempValue, childValue);
+        } else {
+            newTempValue = tempValue;
         }
-        return new CollectionState<>(completed, value, tempValue, newestChildState, newPredicateState);
+        return newState(completed, value, newTempValue, newestChildState, newPredicateState);
     }
 
     @Override
-    public CollectionState<T, U> complete(CollectionState<T, U> state) {
+    public V complete(V state) {
         if (state.isCompleted()) {
             return state;
         }
         final U newTempValue = newValue(state.getTempValue());
         final SimpleState<T> simpleState;
+        final U newestTempValue;
         if(!state.getChildState().isCompleted()) {
             simpleState = innerResultSetExtractor.complete(state.getChildState());
-            newTempValue.add(simpleState.getValue());
+            final T childValue = simpleState.getValue();
+            newestTempValue = addNewValue(newTempValue, childValue);
         } else {
             simpleState = state.getChildState();
+            newestTempValue = newTempValue;
         }
-        final U value = newValue(newTempValue);
-        return new CollectionState<>(true, value, newValue(), simpleState, state.getPredicateState());
+        final U value = newValue(newestTempValue);
+        return newState(true, value, newValue(), simpleState, state.getPredicateState());
     }
 
-    public abstract U newValue();
+    protected abstract U newValue();
 
-    public abstract U newValue(U oldValue);
+    protected abstract U newValue(U oldValue);
+
+    protected abstract U addNewValue(U tempValue, T childValue);
+
+    protected abstract V newState(U newValue, SimpleState<T> state, PredicateState predicateState);
+
+    protected abstract V newState(boolean completed, U value, U newValue, SimpleState<T> state, PredicateState predicateState);
 }
