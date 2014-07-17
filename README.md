@@ -13,10 +13,10 @@ Samples:
     
     @MappedType
     public class LolInfo {
-        @Property
-        private long id;
-        @Property        
-        private String name;
+        @Column
+        public long id;
+        @Column        
+        public String name;
         
         public LolInfo() {}
     }
@@ -28,11 +28,15 @@ Samples:
         public LolInfo getOne(@Param("id") id);
     }
     
-    public class LolInfoMapper extends RowMapper<LolInfo> {
+    public class LolInfoMapper extends ResultSetExtractor<LolInfo> {
         public LolInfo mapRow(ResultSet resultSet) {
-            final long id = resultSet.getLong("id");
-            final String name = resultSet.getString("name");
-            return new LolInfo(id, name);
+            if(resultSet.next()) {
+                final long id = resultSet.getLong("id");
+                final String name = resultSet.getString("name");
+                return new LolInfo(id, name);
+            } else {
+                return null;
+            }
         }
     }
     
@@ -48,7 +52,7 @@ Samples:
         private final String name;
 
         @Creator
-        public LolInfo(@Property("id") long id, @Property("name") String name) {
+        public LolInfo(@Column("id") long id, @Column("name") String name) {
             this.id = id;
             this.name = name;
         }
