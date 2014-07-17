@@ -9,9 +9,5 @@ import ru.shadam.ftlmapper.annotations.query.MappedType;
 @MappedType
 public class ExtraInfo {
     @Column("extraInfo")
-    private String extraField;
-
-    public String getExtraField() {
-        return extraField;
-    }
+    public String extraField;
 }

@@ -39,28 +39,21 @@ public class ObjectGeneratorModule implements GeneratorModule {
             final InnerResultSetExtractor<?> innerObjectExtractor = recursionProvider.generate(innerObject, astBase);
             attributesExtractors.put(innerObjectName, innerObjectExtractor);
         }
-        final InstanceProvider<?> instanceProvider;
         final Class<?> clazz = astObject.getClazz();
-        instanceProvider = getInstanceProvider(clazz);
+        final InstanceProvider<?> instanceProvider = getInstanceProvider(clazz);
         final List<InstanceFiller<?>> instanceFillers = new ArrayList<>();
         final Set<String> attributeNames = attributesExtractors.keySet();
-        final Set<String> foundFillers = new HashSet<>();
         for(Field field: clazz.getFields()) {
             final String fieldName = field.getName();
             if(attributeNames.contains(fieldName)) {
-                foundFillers.add(fieldName);
                 instanceFillers.add(new FieldInstanceFiller<>(field, fieldName));
             }
         }
         for(Method setter: ReflectionUtil.getSetters(clazz)) {
             final String propertyName = ReflectionUtil.getPropertyName(setter);
             if(attributeNames.contains(propertyName)) {
-                foundFillers.add(propertyName);
                 instanceFillers.add(new SetterInstanceFiller<>(setter, propertyName));
             }
-        }
-        if(foundFillers.size() != attributeNames.size()) {
-            throw new IllegalArgumentException("Not all attributes were found");
         }
         return new ObjectResultSetExtractor<>((InstanceProvider)instanceProvider, (List)instanceFillers, attributesExtractors);
     }
@@ -97,6 +90,7 @@ public class ObjectGeneratorModule implements GeneratorModule {
                     }
                     creatorArguments.add(argName);
                 }
+                creator = constructor;
             } else if (constructor.getParameterTypes().length == 0 && Modifier.isPublic(constructor.getModifiers())) {
                 noArgs = constructor;
             }

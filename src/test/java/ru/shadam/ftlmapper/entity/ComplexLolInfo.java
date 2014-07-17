@@ -9,18 +9,10 @@ import ru.shadam.ftlmapper.annotations.query.MappedType;
 @MappedType
 public class ComplexLolInfo {
     @Column("id")
-    private long id;
+    public long id;
 
     @Column("ch")
-    private CreatorLolInfo embedded;
-
-    public long getId() {
-        return id;
-    }
-
-    public CreatorLolInfo getEmbedded() {
-        return embedded;
-    }
+    public CreatorLolInfo embedded;
 
     @Override
     public String toString() {

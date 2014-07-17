@@ -5,7 +5,7 @@ import org.junit.Test;
 import ru.shadam.ftlmapper.annotations.query.Query;
 
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author sala
@@ -13,10 +13,10 @@ import java.util.Set;
 public class SingleColumnTest extends BaseTest {
     public static interface LolRepository {
         @Query("select id, name from lol order by id asc")
-        public Set<Long> getIds();
+        public List<Long> getIds();
 
         @Query("select name from lol order by id asc")
-        public Set<String> getNames();
+        public List<String> getNames();
 
         @Query("select id from lol order by id asc")
         public Long[] getIdsArray();
@@ -26,7 +26,7 @@ public class SingleColumnTest extends BaseTest {
     public void testIds() throws Exception {
         final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
         //
-        final Set<Long> ids = lolRepository.getIds();
+        final List<Long> ids = lolRepository.getIds();
         final Iterator<Long> iterator = ids.iterator();
         final Long first = iterator.next();
         Assert.assertEquals(1L, first.longValue());
@@ -40,7 +40,7 @@ public class SingleColumnTest extends BaseTest {
     public void testNames() throws Exception {
         final LolRepository lolRepository = repositoryFactory.getMapper(LolRepository.class);
         //
-        final Set<String> names = lolRepository.getNames();
+        final List<String> names = lolRepository.getNames();
         final Iterator<String> iterator = names.iterator();
         final String first = iterator.next();
         Assert.assertEquals("abc", first);

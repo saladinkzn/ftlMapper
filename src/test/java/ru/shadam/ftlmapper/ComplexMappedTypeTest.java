@@ -33,15 +33,15 @@ public class ComplexMappedTypeTest extends BaseTest {
         final List<ComplexLolInfo> result = complexMappedRepository.getAllComplexLolInfo();
         Assert.assertEquals(result.size(), 2);
         final ComplexLolInfo first = result.get(0);
-        Assert.assertEquals(1L, first.getId());
-        Assert.assertNotNull(first.getEmbedded());
-        Assert.assertEquals(1L, first.getEmbedded().getId());
-        Assert.assertEquals("abc", first.getEmbedded().getName());
+        Assert.assertEquals(1L, first.id);
+        Assert.assertNotNull(first.embedded);
+        Assert.assertEquals(1L, first.embedded.getId());
+        Assert.assertEquals("abc", first.embedded.getName());
         //
         final ComplexLolInfo second = result.get(1);
-        Assert.assertEquals(2L, second.getId());
-        Assert.assertEquals(2L, second.getEmbedded().getId());
-        Assert.assertEquals("def", second.getEmbedded().getName());
+        Assert.assertEquals(2L, second.id);
+        Assert.assertEquals(2L, second.embedded.getId());
+        Assert.assertEquals("def", second.embedded.getName());
         System.out.println(result);
     }
 
@@ -55,7 +55,7 @@ public class ComplexMappedTypeTest extends BaseTest {
             Assert.assertEquals(1L, first.getId());
             Assert.assertEquals("abc", first.getName());
             Assert.assertNotNull(first.getExtraInfo());
-            Assert.assertEquals("extra1", first.getExtraInfo().getExtraField());
+            Assert.assertEquals("extra1", first.getExtraInfo().extraField);
         }
         //
         {
@@ -63,7 +63,7 @@ public class ComplexMappedTypeTest extends BaseTest {
             Assert.assertEquals(2L, second.getId());
             Assert.assertEquals("def", second.getName());
             Assert.assertNotNull(second.getExtraInfo());
-            Assert.assertEquals("extra2", second.getExtraInfo().getExtraField());
+            Assert.assertEquals("extra2", second.getExtraInfo().extraField);
         }
     }
 }
