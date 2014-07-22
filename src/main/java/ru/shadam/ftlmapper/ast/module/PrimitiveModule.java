@@ -45,6 +45,10 @@ public class PrimitiveModule implements Module {
     }
 
     @Override
+    public ASTBase parse(ParsingContext parsingContext, Type type, RecursionProvider recursionProvider) {
+        return parse(parsingContext.getName, parsingContext.setName, type, recursionProvider);
+    }
+
     public ASTBase parse(String getName, String setName, Type type, RecursionProvider recursionProvider) {
         if(!supports(type)) {
             throw new IllegalArgumentException("Unsupported type: " + type);

@@ -1,5 +1,6 @@
 import ru.shadam.ftlmapper.ast.ASTParser;
 import org.junit.Test;
+import ru.shadam.ftlmapper.ast.module.ParsingContext;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,6 +17,6 @@ public class Test1 {
     public void test1() throws Exception {
         final Type integerList = Repository.class.getMethod("getAll").getGenericReturnType();
         final ASTParser astParser = new ASTParser();
-        System.out.println(astParser.parse("", "", integerList));
+        System.out.println(astParser.parse(new ParsingContext("", ""), integerList));
     }
 }

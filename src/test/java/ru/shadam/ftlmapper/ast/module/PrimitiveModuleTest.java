@@ -46,7 +46,7 @@ public class PrimitiveModuleTest {
                 final ASTPrimitive astPrimitive = ((ASTPrimitive) string);
                 Assert.assertEquals(name, astPrimitive.getGetName());
                 Assert.assertEquals(clazz, astPrimitive.getClazz());
-                Mockito.verify(recursionProvider, Mockito.never()).parse(Mockito.anyString(), Mockito.anyString(), Mockito.any(Class.class));
+                Mockito.verify(recursionProvider, Mockito.never()).parse(Mockito.any(ParsingContext.class), Mockito.any(Class.class));
                 Mockito.reset(recursionProvider);
             }
         }

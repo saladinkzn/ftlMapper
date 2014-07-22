@@ -5,6 +5,8 @@ import ru.shadam.ftlmapper.annotations.query.Param;
 import ru.shadam.ftlmapper.annotations.query.Query;
 import ru.shadam.ftlmapper.annotations.query.Template;
 import ru.shadam.ftlmapper.ast.ASTParser;
+import ru.shadam.ftlmapper.ast.domain.ASTBase;
+import ru.shadam.ftlmapper.ast.module.ParsingContext;
 import ru.shadam.ftlmapper.extractor.ResultSetExtractor;
 import ru.shadam.ftlmapper.extractor.ResultSetExtractorFactory;
 import ru.shadam.ftlmapper.query.query.RawQueryStrategy;
@@ -56,7 +58,9 @@ public class MethodEvaluationInfo {
                 throw new IllegalArgumentException("Cannot instantiate mapper");
             }
         } else {
-            resultSetExtractor = resultSetExtractorFactory.generate(astParser.parse("", "", method.getGenericReturnType()));
+            final ParsingContext parsingContext = new ParsingContext("", "", method.getAnnotations());
+            final ASTBase ast = astParser.parse(parsingContext, method.getGenericReturnType());
+            resultSetExtractor = resultSetExtractorFactory.generate(ast);
         }
     }
 

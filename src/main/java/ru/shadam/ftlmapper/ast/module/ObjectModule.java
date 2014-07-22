@@ -21,6 +21,10 @@ public class ObjectModule implements Module {
     }
 
     @Override
+    public ASTBase parse(ParsingContext parsingContext, Type type, RecursionProvider recursionProvider) {
+        return parse(parsingContext.getName, parsingContext.setName, type, recursionProvider);
+    }
+
     public ASTBase parse(String getName, String setName, Type type, RecursionProvider recursionProvider) {
         if(!supports(type)) {
             throw new IllegalArgumentException("Unsupported type: " + type);
@@ -50,7 +54,7 @@ public class ObjectModule implements Module {
                         }
                     }
                     if(argumentGetName != null && argumentSetName != null) {
-                        final ASTBase astBase = recursionProvider.parse(argumentGetName, argumentSetName, constructor.getParameterTypes()[i]);
+                        final ASTBase astBase = recursionProvider.parse(new ParsingContext(argumentGetName, argumentSetName, annotations), constructor.getParameterTypes()[i]);
                         if(!astBase.hasInnerObject()) {
                             attributes.add(astBase);
                         } else {
@@ -77,7 +81,10 @@ public class ObjectModule implements Module {
                     fieldGetName = column.value();
                 }
             }
-            final ASTBase astBase = recursionProvider.parse(fieldGetName, fieldSetName, field.getGenericType());
+            final ASTBase astBase = recursionProvider.parse(
+                    new ParsingContext(fieldGetName, fieldSetName, field.getAnnotations()),
+                    field.getGenericType()
+            );
             if(!astBase.hasInnerObject()) {
                 attributes.add(astBase);
             } else {
@@ -92,7 +99,6 @@ public class ObjectModule implements Module {
         final List<Method> setters = ReflectionUtil.getSetters(clazz);
         for(Method method: setters) {
             final String propertyName = ReflectionUtil.getPropertyName(method);
-            final String propertySetName = propertyName;
             final String propertyGetName;
             {
                 final Column column = method.getAnnotation(Column.class);
@@ -102,7 +108,10 @@ public class ObjectModule implements Module {
                     propertyGetName = column.value();
                 }
             }
-            final ASTBase astBase = recursionProvider.parse(propertyGetName, propertySetName, method.getParameterTypes()[0]);
+            final ASTBase astBase = recursionProvider.parse(
+                    new ParsingContext(propertyGetName, propertyName, method.getAnnotations()),
+                    method.getParameterTypes()[0]
+            );
             if(!astBase.hasInnerObject()) {
                 attributes.add(astBase);
             } else if(innerObject[0] != null) {

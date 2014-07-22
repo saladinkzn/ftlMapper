@@ -8,5 +8,5 @@ import java.lang.reflect.Type;
  *
  */
 public interface RecursionProvider {
-    public ASTBase parse(String getName, String setName, Type type);
+    public ASTBase parse(ParsingContext parsingContext, Type type);
 }

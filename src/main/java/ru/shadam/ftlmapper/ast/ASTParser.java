@@ -21,12 +21,13 @@ public class ASTParser implements RecursionProvider {
         this.modules.add(new ObjectModule());
     }
 
-    public ASTBase parse(String getName, String setName, Type t) {
+    @Override
+    public ASTBase parse(ParsingContext parsingContext, Type type) {
         for(Module module: modules) {
-            if(module.supports(t)) {
-                return module.parse(getName, setName, t, this);
+            if(module.supports(type)) {
+                return module.parse(parsingContext, type, this);
             }
         }
-        throw new IllegalArgumentException("Unsupported type: " + t);
+        throw new IllegalArgumentException("Unsupported type: " + type);
     }
 }

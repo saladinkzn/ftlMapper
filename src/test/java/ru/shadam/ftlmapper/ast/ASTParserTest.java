@@ -8,6 +8,7 @@ import ru.shadam.ftlmapper.ast.domain.ASTBase;
 import ru.shadam.ftlmapper.ast.domain.ASTList;
 import ru.shadam.ftlmapper.ast.domain.ASTObject;
 import ru.shadam.ftlmapper.ast.domain.ASTPrimitive;
+import ru.shadam.ftlmapper.ast.module.ParsingContext;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ASTParserTest {
     @Test
     public void test() {
         final ASTParser astParser = new ASTParser();
-        final ASTBase astBase = astParser.parse("", "", Master.class);
+        final ASTBase astBase = astParser.parse(new ParsingContext("", ""), Master.class);
         assertTrue(astBase instanceof ASTObject);
         final ASTObject astObject = (ASTObject) astBase;
         assertEquals(Master.class, astObject.getClazz());
@@ -92,7 +93,7 @@ public class ASTParserTest {
     @Test
     public void test2() {
         final ASTParser astParser = new ASTParser();
-        final ASTBase astBase = astParser.parse("", "", Entity.class);
+        final ASTBase astBase = astParser.parse(new ParsingContext("", ""), Entity.class);
         assertTrue(astBase instanceof ASTObject);
         final ASTObject astObject = (ASTObject) astBase;
         assertEquals(Entity.class, astObject.getClazz());
@@ -125,7 +126,7 @@ public class ASTParserTest {
     @Test
     public void test3() {
         final ASTParser astParser = new ASTParser();
-        final ASTBase astBase = astParser.parse("", "", entity.property.Master.class);
+        final ASTBase astBase = astParser.parse(new ParsingContext("", ""), entity.property.Master.class);
         assertTrue(astBase instanceof ASTObject);
         final ASTObject astObject = ((ASTObject) astBase);
         assertEquals("", astObject.getGetName());
