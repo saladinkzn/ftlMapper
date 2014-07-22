@@ -1,16 +1,17 @@
 package ru.shadam.ftlmapper.ast;
 
+import com.google.common.reflect.TypeToken;
 import entity.Master;
 import entity.Slave;
 import entity.property.Entity;
 import org.junit.Test;
-import ru.shadam.ftlmapper.ast.domain.ASTBase;
-import ru.shadam.ftlmapper.ast.domain.ASTList;
-import ru.shadam.ftlmapper.ast.domain.ASTObject;
-import ru.shadam.ftlmapper.ast.domain.ASTPrimitive;
+import ru.shadam.ftlmapper.annotations.query.KeyExtractor;
+import ru.shadam.ftlmapper.ast.domain.*;
 import ru.shadam.ftlmapper.ast.module.ParsingContext;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -182,6 +183,35 @@ public class ASTParserTest {
                     assertEquals(String.class, secondASTPrimitive.getClazz());
                 }
             }
+        }
+    }
+
+    @Test
+    public void testMap() throws Exception {
+        final ASTParser astParser = new ASTParser();
+        final class local { @KeyExtractor("id") public void parse() {} }
+        final Annotation[] annotations = local.class.getMethod("parse").getAnnotations();
+        final ASTBase result = astParser.parse(new ParsingContext("", "", annotations), new TypeToken<Map<Long, String>>() {}.getType());
+        assertTrue(result instanceof ASTMap);
+        final ASTMap astMap = ((ASTMap) result);
+        assertEquals("", astMap.getGetName());
+        assertEquals("", astMap.getSetName());
+        //
+        final ASTBase keyExtractor = astMap.getKey();
+        assertTrue(keyExtractor instanceof ASTPrimitive);
+        {
+            final ASTPrimitive keyPrimitive = ((ASTPrimitive) keyExtractor);
+            assertEquals("id", keyPrimitive.getGetName());
+            assertEquals("", keyPrimitive.getSetName());
+            assertEquals(Long.class, keyPrimitive.getClazz());
+        }
+        final ASTBase astMapInnerObject = astMap.getInnerObject();
+        assertTrue(astMapInnerObject instanceof ASTPrimitive);
+        {
+            final ASTPrimitive valuePrimitive = ((ASTPrimitive) astMapInnerObject);
+            assertEquals("", valuePrimitive.getGetName());
+            assertEquals("", valuePrimitive.getSetName());
+            assertEquals(String.class, valuePrimitive.getClazz());
         }
     }
 }

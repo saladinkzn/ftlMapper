@@ -16,6 +16,7 @@ public class ASTParser implements RecursionProvider {
     public ASTParser() {
         this.modules = new ArrayList<>();
         this.modules.add(new PrimitiveModule());
+        this.modules.add(new MapModule());
         this.modules.add(new CollectionModule());
         this.modules.add(new ArrayModule());
         this.modules.add(new ObjectModule());
